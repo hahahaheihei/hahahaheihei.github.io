@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-03-03T13:58:54.549Z</updated>
+  <updated>2020-06-22T10:56:13.526Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Linux基本命令</title>
+    <link href="http://yoursite.com/2020/06/22/Linux%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4/"/>
+    <id>http://yoursite.com/2020/06/22/Linux%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4/</id>
+    <published>2020-06-22T10:51:53.000Z</published>
+    <updated>2020-06-22T10:56:13.526Z</updated>
+    
+    <content type="html"><![CDATA[<p>终端的打开方式</p><p>1、ctrl+alt+t</p><p>2、直接点击图标</p><p>3、打开一个终端后，再打开一个新的终端ctrl+shift+n</p><p>关闭终端：命令行中输入exit然后按回车</p><p>放大 ctrl+shift+ ‘+’</p><p>缩小 ctrl+‘-’</p><p>linux@ubuntu:~$ </p><p>用户名@主机名:当前目录$</p><p>   这里的~是linux用户家目录</p><p>​    $普通用户</p><p>​    #超级用户</p><p>4.0、Linux系统是多任务多用户分时操作系统</p><p>命令whoami显示用户名</p><p>命令hostname显示主机名</p><p>​    $普通用户 linux </p><p>​    #超级用户 root</p><p>​    切换用户命令：su 用户名</p><p>​                su root切换到超级用户</p><p>​                su  linux切换到linux用户</p><p>​                修改密码 sudo passwd 用户名</p><p>4.1、ls命令</p><p>​        ls 显示当前目录下的文件和文件夹</p><p>​        ls  -l显示当前目录下文件或文件夹的属性</p><p>​        ls  -lh按照文件大小单位来显示</p><p>​        ls  -a显示所有文件包括隐藏文件（隐藏文件是以.开头的）</p><p>​            目录中一个点 代表当前目录，..两个点代表上一级目录</p><p>​            </p><p>drwxrwxrwx  3  linux linux 4096 六月 12 18:24 toolchain</p><p>d                   rwx                rwx                         rwx</p><p>文件的类型  拥有者权限   同组用户的权限  其他用户的权限</p><p>​            r读权限w写权限x执行权限</p><p>3  链接数–》别名有几个</p><p>linux linux 用户名  组名</p><p>4096 大小</p><p>六月 12 18:24 时间</p><p>toolchain文件名</p><p>文件的类型（7种）：bcd-lsp</p><p>​    -普通文件</p><p>​    d目录</p><p>​    l链接文件（类似Windows快捷方式）</p><p>​    c字符设备驱动文件类型</p><p>​    b块设备驱动文件类型</p><p>​    p管道文件</p><p>​    s套接字文件</p><p>4.2 cd切换目录的命令</p><p>​    cd  目录名  </p><p>​            如果目录名称过长，可以输入前几个字母后使用tab键或esc键将其补齐。</p><p>​    cd ..  是返回上一级目录</p><p>​    cd -  返回上一次操作的目录</p><p>​    cd ~ 返回当前用户的家目录（cd后面什么都不加，也可以实现）</p><p>​    cd / 打开根目录</p><p>​    在/home/linux目录下，想要进入/etc目录</p><p>​        可以通过绝对路径的方式 ： cd   /etc</p><p>​        可以用相对路径方式：cd ../../etc</p><p>​        cd   绝对路径：从根目录开始访问</p><p>​        cd   相对路径：通过目录之间的位置关系访问</p><p>4.3、pwd命令显示当前所在目录位置</p><p>​        print work directory</p><p>4.4、clear清屏命令</p><p>​        ctrl+L</p><p>4.5、创建文件</p><p>​        touch命令</p><p>​        如果文件不存在就创建空的普通文件</p><p>​            touch  yapingnihao </p><p>​        如果文件存在就更新文件的时间戳，不会改变文件的内容</p><p>​                第一次touch    -rw-rw-r– 1 linux linux    6 六月 15 15:38 yapingnihao  </p><p>​                第二次touch    -rw-rw-r– 1 linux linux    6 六月 15 15:39 yapingnihao</p><p>​    4.6、mkdir创建目录（make  directory）</p><p>​                mkdir   jiaweinihao 在当前目录创建一个jiaweinihao的目录</p><p>​                创建的目录不可以和文件和文件夹重名</p><p>​                mkdir  d1  d2  d3 可以创建多个目录，这些目录是在同一级的。</p><p>​                mkdir -p  1/2/3     创建具备层级关系的1 2 3这些目录</p><p>​    4.7、删除目录（remove  directory）</p><p>​                 rmdir只能用来删除空目录</p><p>​    4.8、rm命令（remove）</p><p>​            rm  1.c  删除当前目录下的1.c</p><p>​            rm *.c 删除所有以.c结尾的文件（  *是通配符，表示所有）</p><p>​            删除目录</p><p>​            rm -r  1   删除1目录（-r递归删除）</p><p>​            rm test* -rf （-f强制删除）</p><p>​            rm * -rf   删除所有的当前目录下文件文件夹</p><p>​    4.9、复制命令cp（拷贝）</p><p>​            复制文件</p><p>​                复制不改名cp    源文件的路径/名字    目标路径</p><p>​                            cp    ../../a.c     3/   将上上目录中的a.c文件，复制到3这个目录中，</p><p>​                复制并改名   cp    源文件的路径/名字    目标路径/新名字</p><p>​                            cp    test/a.c     3/4/b.c    将test目录中的a.c复制到3/4/目录后命名为b.c</p><p>​            复制目录</p><p>​                cp  路径/原目录   目标路径   -r （递归拷贝）</p><p>​                cp  路径/原目录   目标路径/新名   -r  复制并重命名</p><p>​    4.10、移动mv命令move</p><p>​            移动</p><p>​            mv  路径/源文件   目标路径</p><p>​            mv  路径/目录      目标路径</p><p>​            mv    1/2/ydhou    2/  把ydhou 移动到2目录中</p><p>​            mv     3/ydhou      5/ccc   把yidhou移动到5目录中并改名为ccc</p><p>​        重命名</p><p>​                mv  旧的名字    新的名字</p><p>​                linux@ubuntu:~/jiaweinihao$ touch aaaa</p><p>​                linux@ubuntu:<del>/jiaweinihao$ ls<br>​                666666  aaaa<br>​                linux@ubuntu:</del>/jiaweinihao$ mv aaaa zzzz</p><p>4.11、echo打印命令</p><p>​                 echo  helloxinzong   将helloxinzong打印在终端上</p><p>​                 echo  nihaojiawei &gt; a.c 将nihaojiawei输出重定向到a.c文件中（覆盖之前a.c的内容）</p><p>​                 echo  xinzongnihao &gt;&gt; a.c将xinzongnihao输出重定向到a.c文件中（追加在文件内容的末尾，不覆盖）</p><p>​                 echo  yingying &gt;&gt; a.c</p><p>4.12 cat命令</p><p>​        打印文件内容到终端上</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;终端的打开方式&lt;/p&gt;
+&lt;p&gt;1、ctrl+alt+t&lt;/p&gt;
+&lt;p&gt;2、直接点击图标&lt;/p&gt;
+&lt;p&gt;3、打开一个终端后，再打开一个新的终端ctrl+shift+n&lt;/p&gt;
+&lt;p&gt;关闭终端：命令行中输入exit然后按回车&lt;/p&gt;
+&lt;p&gt;放大 ctrl+shift+ ‘+’&lt;
+      
+    
+    </summary>
+    
+    
+    
+      <category term="运维" scheme="http://yoursite.com/tags/%E8%BF%90%E7%BB%B4/"/>
+    
+  </entry>
   
   <entry>
     <title>vue</title>

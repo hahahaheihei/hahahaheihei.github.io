@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-07-09T03:02:00.432Z</updated>
+  <updated>2020-10-02T10:39:32.840Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>golang的协程调度</title>
+    <link href="http://yoursite.com/2020/10/02/golang%E7%9A%84%E5%8D%8F%E7%A8%8B%E8%B0%83%E5%BA%A6/"/>
+    <id>http://yoursite.com/2020/10/02/golang%E7%9A%84%E5%8D%8F%E7%A8%8B%E8%B0%83%E5%BA%A6/</id>
+    <published>2020-10-02T08:17:22.000Z</published>
+    <updated>2020-10-02T10:39:32.840Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="goroutine的调度器模型"><a href="#goroutine的调度器模型" class="headerlink" title="goroutine的调度器模型"></a>goroutine的调度器模型</h1><p><strong>总结：goroutine是依赖于线程，所以gorountine必须调度到m上，p相当于一个调度的执行者p将goroutine调度到m中执行，一般p的个数相当于cpu的核数（可以修改）</strong></p><p>线程数过多，意味着操作系统会不断地切换线程，频繁的上下文切换就成了性能瓶颈。<br>Go提供一种机制，可以在线程中自己实现调度，上下文切换更轻量，从而达到了线程数少，而并发数并不少的效果。而线程中调度的就是Goroutine.</p><p>早期Go版本，比如1.9.2版本的源码注释中有关于调度器的解释。<br>Goroutine 调度器的工作就是把“ready-to-run”的goroutine分发到线程中。</p><p>Goroutine主要概念如下：</p><ul><li>G（Goroutine）: 即Go协程，每个go关键字都会创建一个协程。</li><li>M（Machine）： 工作线程，在Go中称为Machine。</li><li>P(Processor): 处理器（Go中定义的一个摡念，不是指CPU），包含运行Go代码的必要资源，也有调度goroutine的能力。</li></ul><p>M必须拥有P才可以执行G中的代码，P含有一个包含多个G的队列，P可以调度G交由M执行。其关系如下图所示：</p><p><img src="http://wen.topgoer.com/uploads/gozhuanjia/images/m_274ee3af62bab4ad8f74a6753d6969cf_r.png" alt="mpg的调度模型"></p><p>图中M是交给操作系统调度的线程，M持有一个P，P将G调度进M中执行。P同时还维护着一个包含G的队列（图中灰色部分），可以按照一定的策略将G调度到M中执行。</p><p>P的个数在程序启动时决定，默认情况下等同于CPU的核数，由于M必须持有一个P才可以运行Go代码，所以同时运行的M个数，也即线程数一般等同于CPU的个数，以达到尽可能的使用CPU而又不至于产生过多的线程切换开销。</p><h1 id="goroutine的调度策略"><a href="#goroutine的调度策略" class="headerlink" title="goroutine的调度策略"></a>goroutine的调度策略</h1><h2 id="1、队列轮转"><a href="#1、队列轮转" class="headerlink" title="1、队列轮转"></a>1、队列轮转</h2><p>上图中可见每个P维护着一个包含G的队列，不考虑G进入系统调用或IO操作的情况下，P周期性的将G调度到M中执行，执行一小段时间，将上下文保存下来，然后将G放到队列尾部，然后从队列中重新取出一个G进行调度。</p><p>除了每个P维护的G队列以外，还有一个全局的队列，每个P会周期性地查看全局队列中是否有G待运行并将其调度到M中执行，全局队列中G的来源，主要有从系统调用中恢复的G。之所以P会周期性地查看全局队列，也是为了防止全局队列中的G被饿死。</p><p><strong>总结：go的并发是对goroutine的调度，goroutine队列周期性的调度到m中去执行，就是go并发的核心</strong></p><h2 id="2、系统调用"><a href="#2、系统调用" class="headerlink" title="2、系统调用"></a>2、系统调用</h2><p>上面说到P的个数默认等于CPU核数，每个M必须持有一个P才可以执行G，一般情况下M的个数会略大于P的个数，这多出来的M将会在G产生系统调用时发挥作用。类似线程池，Go也提供一个M的池子，需要时从池子中获取，用完放回池子，不够用时就再创建一个。</p><p>当M运行的某个G产生系统调用时，如下图所示：</p><p><img src="http://wen.topgoer.com/uploads/gozhuanjia/images/m_fd748bf1364411aa7929b84c155ef67a_r.png" alt="系统调用"></p><p>如图所示，当G0即将进入系统调用时，M0将释放P，进而某个空闲的M1获取P，继续执行P队列中剩下的G。而M0由于陷入系统调用而进被阻塞，M1接替M0的工作，只要P不空闲，就可以保证充分利用CPU。</p><p>M1的来源有可能是M的缓存池，也可能是新建的。当G0系统调用结束后，根据M0是否能获取到P，将会将G0做不同的处理：</p><ol><li>如果有空闲的P，则获取一个P，继续执行G0。</li><li>如果没有空闲的P，则将G0放入全局队列，等待被其他的P调度。然后M0将进入缓存池睡眠。</li></ol><h2 id="3、工作量窃取"><a href="#3、工作量窃取" class="headerlink" title="3、工作量窃取"></a>3、工作量窃取</h2><p>多个P中维护的G队列有可能是不均衡的，比如下图： </p><p><img src="http://wen.topgoer.com/uploads/gozhuanjia/images/m_511f878a3328cf036e73368eaf864177_r.png" alt=""></p><p>竖线左侧中右边的P已经将G全部执行完，然后去查询全局队列，全局队列中也没有G，而另一个M中除了正在运行的G外，队列中还有3个G待运行。此时，空闲的P会将其他P中的G偷取一部分过来，一般每次偷取一半。偷取完如右图所示。 </p><p><strong>总结，这个策略就是为了更高效的执行goroutine，平衡各个队列中的等待goroutine</strong></p><h2 id="4、GOMAXPROCS设置对性能的影响"><a href="#4、GOMAXPROCS设置对性能的影响" class="headerlink" title="4、GOMAXPROCS设置对性能的影响"></a>4、GOMAXPROCS设置对性能的影响</h2><p>一般来讲，程序运行时就将GOMAXPROCS大小设置为CPU核数，可让Go程序充分利用CPU。 在某些IO密集型的应用里，这个值可能并不意味着性能最好。 理论上当某个Goroutine进入系统调用时，会有一个新的M被启用或创建，继续占满CPU。 但由于Go调度器检测到M被阻塞是有一定延迟的，也即旧的M被阻塞和新的M得到运行之间是有一定间隔的，所以在IO密集型应用中不妨把GOMAXPROCS设置的大一些，或许会有好的效果。 </p><p><strong>参考</strong>：<a href="http://morsmachine.dk/go-scheduler" target="_blank" rel="noopener">The Go scheduler</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;goroutine的调度器模型&quot;&gt;&lt;a href=&quot;#goroutine的调度器模型&quot; class=&quot;headerlink&quot; title=&quot;goroutine的调度器模型&quot;&gt;&lt;/a&gt;goroutine的调度器模型&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;总结：gorouti
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>数据结构</title>

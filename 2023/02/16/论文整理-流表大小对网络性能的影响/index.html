@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="聪菌粑粑" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="一 引言本文主要研究流表大小对网络性能的影响，数据均来自期刊论文，我没有按照论文复现实验，所以我无法保证数据的真实性。本文仅仅是论文数据的整理和汇总分析，可以作为工作中性能调优的参考，实际生产中可能有其它的生产场景的数据，欢迎和我联系共同丰富数据的完整性。 二 相关研究2.1测试环境： 我们⽤H3C S5820V2OpenFlow 交换机 Opendaylight作为控制器试匹配&#x2F;添加&#x2F;删除&#x2F;修改">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[论文整理]流表大小对网络性能的影响">
+<meta property="og:url" content="http://yoursite.com/2023/02/16/%E8%AE%BA%E6%96%87%E6%95%B4%E7%90%86-%E6%B5%81%E8%A1%A8%E5%A4%A7%E5%B0%8F%E5%AF%B9%E7%BD%91%E7%BB%9C%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D/index.html">
+<meta property="og:site_name" content="聪菌粑粑">
+<meta property="og:description" content="一 引言本文主要研究流表大小对网络性能的影响，数据均来自期刊论文，我没有按照论文复现实验，所以我无法保证数据的真实性。本文仅仅是论文数据的整理和汇总分析，可以作为工作中性能调优的参考，实际生产中可能有其它的生产场景的数据，欢迎和我联系共同丰富数据的完整性。 二 相关研究2.1测试环境： 我们⽤H3C S5820V2OpenFlow 交换机 Opendaylight作为控制器试匹配&#x2F;添加&#x2F;删除&#x2F;修改">
+<meta property="og:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8f9edfc149d9438c95b4c8f8d1eb38b0~tplv-k3u1fbpfcp-watermark.image">
+<meta property="og:image" content="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b74222c6deae401ab4b3b8ca7b23c061~tplv-k3u1fbpfcp-watermark.image">
+<meta property="article:published_time" content="2023-02-16T13:03:58.000Z">
+<meta property="article:modified_time" content="2023-02-16T13:07:32.344Z">
+<meta property="article:author" content="Cong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8f9edfc149d9438c95b4c8f8d1eb38b0~tplv-k3u1fbpfcp-watermark.image">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2023/02/16/论文整理-流表大小对网络性能的影响/"/>
+
+
+
+
+
+  <title>[论文整理]流表大小对网络性能的影响 | 聪菌粑粑</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">聪菌粑粑</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">希望你觉得认识我是件幸运的事</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2023/02/16/%E8%AE%BA%E6%96%87%E6%95%B4%E7%90%86-%E6%B5%81%E8%A1%A8%E5%A4%A7%E5%B0%8F%E5%AF%B9%E7%BD%91%E7%BB%9C%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="聪菌粑粑">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[论文整理]流表大小对网络性能的影响</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-02-16T21:03:58+08:00">
+                2023-02-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一-引言"><a href="#一-引言" class="headerlink" title="一 引言"></a><strong>一 引言</strong></h1><p>本文主要研究流表大小对网络性能的影响，数据均来自期刊论文，我没有按照论文复现实验，所以我无法保证数据的真实性。本文仅仅是论文数据的整理和汇总分析，可以作为工作中性能调优的参考，实际生产中可能有其它的生产场景的数据，欢迎和我联系共同丰富数据的完整性。</p>
+<h1 id="二-相关研究"><a href="#二-相关研究" class="headerlink" title="二 相关研究"></a><strong>二 相关研究</strong></h1><h2 id="2-1"><a href="#2-1" class="headerlink" title="2.1"></a>2.1</h2><p>测试环境：</p>
+<p>我们⽤H3C S5820V2OpenFlow 交换机 Opendaylight作为控制器试匹配/添加/删除/修改条⽬的平均响应时间每个操作都在增加的随机选择条⽬中进⾏测试。详细数据如表一所示</p>
+<table>
+<thead>
+<tr>
+<th>Flow table size</th>
+<th>match</th>
+<th>add</th>
+<th>delete</th>
+<th>Modify</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>100</td>
+<td>1.71ms</td>
+<td>11 ms</td>
+<td>10 ms</td>
+<td>6 ms</td>
+</tr>
+<tr>
+<td>500</td>
+<td>5.2ms</td>
+<td>171 ms</td>
+<td>87 ms</td>
+<td>33 ms</td>
+</tr>
+<tr>
+<td>1000</td>
+<td>15.7ms</td>
+<td>290 ms</td>
+<td>112 ms</td>
+<td>51 ms</td>
+</tr>
+<tr>
+<td>2000</td>
+<td>27.3ms</td>
+<td>454 ms</td>
+<td>207 ms</td>
+<td>107 ms</td>
+</tr>
+<tr>
+<td>3000</td>
+<td>41.3ms</td>
+<td>15589 ms</td>
+<td>573 ms</td>
+<td>133 ms</td>
+</tr>
+</tbody></table>
+<p><strong>表一时间成本与流表规模大小的关系[1]</strong></p>
+<h2 id="2-2"><a href="#2-2" class="headerlink" title="2.2"></a>2.2</h2><p>BA模型:无标度网络模型，</p>
+<p>初始时，网络中有m0个节点，这些节点任意连接，只需保证每个节点至少有一个链接即可，并按照生长与偏好连接逐步演,每步向网络中添加一个拥有m(≤m0) 条链的新节点。 <strong>[2]</strong></p>
+<p>Bcube模型：专为⽀持带宽密集型应⽤的模块化数据中⼼⽽设计。BCube 架构的核⼼是其以服务器为中⼼的⽹络结构，其中服务器不仅充当终端主机，还充当彼此的中继节点. <strong>[3]</strong></p>
+<p>网状拓扑 :网状拓扑是一种网络设置，其中每台计算机和网络设备相互连接。即使其中一个连接出现故障，这种拓扑设置也允许分配大多数传输。<a href="https://www.computerhope.com/jargon/w/wifi.htm" target="_blank" rel="noopener">它是无线网络</a>常用的一种拓扑结构。下面是使用网状拓扑在网络上设置简单计算机的可视示例</p>
+<p>测试背景：</p>
+<p>对于所有拓扑，模拟了 200,000 种不同需求的流量。在⽤于我们实验的每个图形实例中，转发表⼤⼩统⼀设置在 500 到 10,000 之间。该值是根据流量需求数 (200,000) 设置的。</p>
+<p>在所有拓扑中，链路容量是统⼀的（通常表⽰ 10 Gigabit 链路），⽽需求是使⽤均匀分布随机⽣成的，并根据我们的基础设施可以⽀持的最⼤流量进⾏标准化。具体来说，我们表⽰为F最⼤限度在节点上没有路径度限制的情况下，可以为所有需求路由的最⼤流量。</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8f9edfc149d9438c95b4c8f8d1eb38b0~tplv-k3u1fbpfcp-watermark.image?" alt="流表大小和总流量的关系.png"></p>
+<p><strong>图1 流表大小和总流量的关系[4]</strong></p>
+<hr>
+<p>显然，节点的流表⼤⼩越⼩，可以达到的总流量就越低。对于 5000个条⽬的转发表⼤⼩，实现的流量在最佳（BA 拓扑）的 75% 以上，⽽对于 1000 个条⽬的⼤⼩，它减少到最佳（BCube 拓扑）的25% 以上。我们注意到，在计算最⼤流量时，转发表⼤⼩没有提供限制，转发表条⽬的实际使⽤量被测量为⾼达 30,000（最⾼值是针对 BA 拓扑测量的）。从图中可以看出，使⽤我们的技术，只需使⽤10,000 个条⽬（3 倍），同时将总流量减少 15%。</p>
+<p>同时，转发表大小和性能比如图2所示</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b74222c6deae401ab4b3b8ca7b23c061~tplv-k3u1fbpfcp-watermark.image?" alt="路径度最大流量算法与贪婪算法的性能比.png"></p>
+<p><strong>图2路径度最大流量算法与贪婪算法的性能比[4]</strong></p>
+<h1 id="三-结论"><a href="#三-结论" class="headerlink" title="三 结论"></a><strong>三 结论</strong></h1><p>由研究一可以看出，网络的性能和流表的规模呈现出明显的负相关，即流表规模越大，openflow平均相应时间越长。而研究二表示，在网络拓扑中，流表规模和网络性能呈现正相关，即流表规模越大，网络拓扑中可以承受的网络流量越大，并且在流表规模到达1000-2000时性能下降较为明显，2000-3000以后虽然性能比不在下降，但是性能比的值相对较小。</p>
+<p>综上流表的规模推荐流表条数小于2000.</p>
+<h1 id="四-参考文献"><a href="#四-参考文献" class="headerlink" title="四 参考文献"></a><strong>四 参考文献</strong></h1><p>[1] Bing Leng,Liusheng Huang,Chunming Qiao,Hongli Xu,Xinglong Wang.FTRS: A mechanism for reducing flow table entries in software defined networks[J].Computer Networks,2017,122(122).</p>
+<p>[2] R. Albert and A.L. Barabasi. Statistical mechanics of complex networks. Reviews of Modern Physics, Vol. 74, pp. 47-97, 2002.</p>
+<p>[3] Guo, CX,Lu, GH,Li, D,Wu, HT,Zhang, X,Shi, YF,Tian, C,Zhang, YG,Lu, SW. BCube: A High Performance, Server-centric Network Architecture for Modular Data Centers[J]. Computer Communication Review: A Quarterly Publication of the Special Interest Group on Data Communication,2009,39(4).</p>
+<p>[4] R. Cohen, L. Lewin-Eytan, J. S. Naor and D. Raz, “On the effect of forwarding table size on SDN network utilization,” IEEE INFOCOM 2014 - IEEE Conference on Computer Communications, 2014, pp. 1734-1742, doi: 10.1109/INFOCOM.2014.6848111.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/02/15/kubernetes%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" rel="next" title="kubernetes网络模型">
+                <i class="fa fa-chevron-left"></i> kubernetes网络模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/02/20/%E6%8B%89%E8%B5%B7pod%E7%9A%84%E6%B5%81%E7%A8%8B/" rel="prev" title="拉起pod的流程">
+                拉起pod的流程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Cong</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+		  <!--音乐播放器-->
+		  <div>
+			<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=495562302&auto=1&height=66"></iframe>
+		  </div>
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-引言"><span class="nav-number">1.</span> <span class="nav-text">一 引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-相关研究"><span class="nav-number">2.</span> <span class="nav-text">二 相关研究</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1"><span class="nav-number">2.1.</span> <span class="nav-text">2.1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2"><span class="nav-number">2.2.</span> <span class="nav-text">2.2</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-结论"><span class="nav-number">3.</span> <span class="nav-text">三 结论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-参考文献"><span class="nav-number">4.</span> <span class="nav-text">四 参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cong</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+	<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+</body>
+</html>
+  <script type="text/javascript" src="/js/src/love.js"></script>

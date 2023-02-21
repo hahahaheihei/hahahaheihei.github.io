@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="聪菌粑粑" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言，云原生网络的基础就是在主机层面的网络虚拟化而来，将原有的网络空间通过虚拟化隔离出单独的网络空间。在宿主机中的每个容器获得一个单独的网络空间，对网络资源的隔离就是云原生网络的基础。所以本文主要是对云原生的基石linux 网络虚拟化相关的知识相关笔记 network namespace  linux 的network namespace技术可以自定义一个独立的网络栈，简单到只有loopback设">
+<meta property="og:type" content="article">
+<meta property="og:title" content="云原生网络基础">
+<meta property="og:url" content="http://yoursite.com/2023/02/15/%E4%BA%91%E5%8E%9F%E7%94%9F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="聪菌粑粑">
+<meta property="og:description" content="前言，云原生网络的基础就是在主机层面的网络虚拟化而来，将原有的网络空间通过虚拟化隔离出单独的网络空间。在宿主机中的每个容器获得一个单独的网络空间，对网络资源的隔离就是云原生网络的基础。所以本文主要是对云原生的基石linux 网络虚拟化相关的知识相关笔记 network namespace  linux 的network namespace技术可以自定义一个独立的网络栈，简单到只有loopback设">
+<meta property="article:published_time" content="2023-02-15T13:38:59.000Z">
+<meta property="article:modified_time" content="2023-02-15T13:42:21.557Z">
+<meta property="article:author" content="Cong">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2023/02/15/云原生网络基础/"/>
+
+
+
+
+
+  <title>云原生网络基础 | 聪菌粑粑</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">聪菌粑粑</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">希望你觉得认识我是件幸运的事</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2023/02/15/%E4%BA%91%E5%8E%9F%E7%94%9F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="聪菌粑粑">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">云原生网络基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-02-15T21:38:59+08:00">
+                2023-02-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前言，云原生网络的基础就是在主机层面的网络虚拟化而来，将原有的网络空间通过虚拟化隔离出单独的网络空间。在宿主机中的每个容器获得一个单独的网络空间，对网络资源的隔离就是云原生网络的基础。所以本文主要是对云原生的基石linux 网络虚拟化相关的知识相关笔记</p>
+<h2 id="network-namespace"><a href="#network-namespace" class="headerlink" title="network namespace"></a>network namespace</h2><p>  linux 的network namespace技术可以自定义一个独立的网络栈，简单到只有loopback设备，复杂到具备系统完整的网络能力，linux namespace的作用就是隔离内核资源，想要使用namespace里的资源，首先要进入到，namespace中，而且还无法跨namespace访问资源</p>
+<ul>
+<li>ip netns</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ip netns add netns1</span><br><span class="line">ip netns list </span><br><span class="line">ip netns exec netns1 sh </span><br><span class="line">ip netns delete netns1</span><br></pre></td></tr></table></figure>
+<p>  当ip命令创建一个network namespace之后，系统会在/var/run/netns路径下生成一个挂载点，挂载点的作用一是对namespace管理二是namespace没有进程运行也能存在</p>
+<ul>
+<li>配置namespace<br>创建的namespace中会附带创建一个本地回环地址lo，状态还是down的，所以访问当前namespace的本地回环地址是不通的<br>想要与外界通信的话，需要在namespace里再创建一对veth pair，并将其一端放于当前namespace，一端放于想要互通的namespace<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link add veth0 type veth peer name veth1</span><br><span class="line">ip link set veth1 netns netns1</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>到目前为止，在netns1 namespace内部，仍然不能与外界通信，因为这两个块网卡还处于down状态，还需要手动为网卡绑定IP</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip netns exec netns1 ifconfig veth1 10.1.1.1&#x2F;24 up</span><br><span class="line">ifconfig veth0 10.1.1.1.2&#x2F;24 up</span><br></pre></td></tr></table></figure>
+
+<p>此外，不同的namespace直接的路由表和防火墙规则等也是隔离的，所以netns1的路由表和防火墙没法和主机共享路由表和防火墙</p>
+<h2 id="veth-pair"><a href="#veth-pair" class="headerlink" title="veth pair"></a>veth pair</h2><p>veth pair是虚拟以太网卡(Virtual Ethernet)的缩写，veth设备总是成对的，所以成为veth pair，一端发送的数据会在另一端接收，非常像linux的双向管道，使用可以参照network namespace</p>
+<h2 id="linux-bridge"><a href="#linux-bridge" class="headerlink" title="linux bridge"></a>linux bridge</h2><p>网桥是二层设备，两个端口Denbighshire有一条独立的交换信道，不共享一条背板总线。linux bridge就是linux系统中的网桥，但是linux bridge的行为更像是一台网络虚拟交换机</p>
+<ul>
+<li>创建bridge</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link add name br0 type bridge </span><br><span class="line">ip linl set br0 up</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brctl addbr br0</span><br></pre></td></tr></table></figure>
+
+<p>刚刚创建的bridge是一个独立的网络设备，只有一个端口连接协议栈，其它端口什么都没连，这里加上一堆veth设备，并配置IP</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ip link add veth0 type veth peer name veth1</span><br><span class="line">ip addr add 1.2.3.1&#x2F;24 dev veth0 </span><br><span class="line">ip addr add 1.2.3.2&#x2F;24 dev veth1</span><br><span class="line">ip link set veth0 up </span><br><span class="line">ip link set veth0 up</span><br></pre></td></tr></table></figure>
+
+<p>将veth0连接到br0</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip link set dev veth0 master br0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brctl addif br0 veth0</span><br></pre></td></tr></table></figure>
+
+<p>查看当前网桥上连接了哪些设备</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bridge link</span><br><span class="line">brctl show</span><br></pre></td></tr></table></figure>
+
+<p>br0和veth0相连之后发生了如下变化</p>
+<p>br0和veth0直接连接起来了，并且是双向通道，协议站和veth0直接变成了单项通道，协议栈能发送数据给veth0，但veth0收到的数据不会转发给协议栈,直接转发给bridge了</p>
+<p>从上面分析可以看出，给veth0分配IP没有意义，因为就算协议栈传数据包给veth0，回程报文也回不来，所以直接把veth0的IP地址让给，linux bridge</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip addr del 1.2.3.101&#x2F;24 dev veth0</span><br><span class="line">ip addr add 1.2.3.101&#x2F;24 dev br0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping -c 1 -I br0 1.2.3.102</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以ping通veth1了但是还是ping不通网关，因为网桥上只有veth1 和 veth2 ，不知道网关的地址</p>
+<p>所以把物理网卡也加到bridge上</p>
+<h2 id="tun-tap"><a href="#tun-tap" class="headerlink" title="tun/tap"></a>tun/tap</h2><p>tun/tap设备，从linux文件系统角度看，是用户可以用文件句柄操作的字符设备，从网络虚拟化角度看，是虚拟网卡，一端连接网络协议栈，一端连接用户态程序。tun表示虚拟的是点对点设备，tap表示虚拟的是以太网设备。tun/tap设备可以讲TCP/ip协议栈处理好的网络包发送给任何一个使用tun/tap驱动的进程，由进程冲洗处理后发到物理链路中。</p>
+<h2 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h2><p>iptables底层实现是，netfilter，它提供了一整套hook函数的管理机制，使得数据包过滤，包处理（设置标志位、修改TTL等）、地址伪装、网络地址转换、透明代理等功能<br><del>因为iptables 相对复杂，篇幅所限不很难讲解透彻，感兴趣的可以自行了解，要点在iptables 的四表五链</del></p>
+<h2 id="ipip"><a href="#ipip" class="headerlink" title="ipip"></a>ipip</h2><p>linux原生支持下列5种L3隧道，</p>
+<ul>
+<li>ipip：IPv4 in IPv4 ，在IPv4报文的基础上再封装一个IPv4报文</li>
+<li>GRE：通用路由封装（Generic Routing Encapsulation）,定义了在任意的一种网络协议上封装其它任意一种网络层协议的机制，v4和v6都支持</li>
+<li>sitL和ipip类似，不同的是用IPv4报文封装IPv6</li>
+<li>ISATAP：站内自动隧道寻址协议与sit类似，也用于IPv6的隧道封装</li>
+<li>VTI：虚拟隧道接口，思科提出的一种IPSec隧道技术</li>
+</ul>
+<p><strong>Linux L3隧道底层实现原理都基于tun设备</strong></p>
+<h2 id="VXLan"><a href="#VXLan" class="headerlink" title="VXLan"></a>VXLan</h2><h2 id="Macvlan"><a href="#Macvlan" class="headerlink" title="Macvlan"></a>Macvlan</h2><p>macvlan接口可以看作是物理以太网接口的虚拟子接口，macvlan允许用户在主机的一个网络接口上配置多个虚拟的网络接口，每个macvlan接口都有自己区别于父接口的Mac地址，并且可以像普通的网络接口一样分配IP地址，，一块物理网卡上可以绑定多个IP地址，每个IP地址都有自己的MAC地址</p>
+<p>bridge模式：区别于linux网桥，不需要学习mac地址，性能要优于 linux bridge. 相同父接口的两块macvlan虚拟网卡可以直接通信，不需要把流量通过父接口发送到外部网络。</p>
+<p>vepa模式：默认模式，所有从macvlan接口发出的流量都会从父接口发出，经由交换机处理</p>
+<p>private模式，类似vepa模式，但是增强了隔离，完全阻止了，同一父接口的macvlan之间的通信，</p>
+<p>passthru:模式，直通模式，macvlan每个父接口只能绑定一个macvlan</p>
+<p>在容器网络中，访问跨节点的容器，物理网卡（父接口）相当于一个交换机，对应进出其子Macvlan网卡的数据包，只转发，不处理，所以使用本机Macvlan网卡的IP，无法和本届物理网卡IP通信。</p>
+<p>只为虚拟机或容器提供访问外部物理网络的连接</p>
+<h2 id="IPvlan"><a href="#IPvlan" class="headerlink" title="IPvlan"></a>IPvlan</h2><p>和macvlan类似，IPvlan也是从一个主机接口虚拟出多个虚拟网络接口，区别在于IPvlan所有的虚拟接口都是相同的MAC地址，但是IP地址却不同，所有的IPvlan共享mac地址，所以需要注意DHCP使用的场景，DHCP分配IP地址的时候一般回用MAC地址所谓机器表示，所以在使用MACVlan的情况下，客户端动态获取PI的时候需要配置唯一的clientID，</p>
+<p>IPvlan有L2和L3两种模式，一个父接口只能选择其中一种模式</p>
+<ul>
+<li>L2模式：和macvlan的bridge模式工作原理相似，父接口作为交换机转发子接口的数据，同一个网络的子接口可以通过父接口转发数据，如果想发送到其它网络，则报文回通过父接口的路由转发出去</li>
+<li>L3模式，有点像路由器的功能。IPvlan在各个虚拟网络和主机网络之间进行不同网络报文的路由转发工作。只要父接口相同，即使虚拟机/容器不在同一个网络内，也可以互通</li>
+</ul>
+<h2 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h2><p>很多的网络问题都和路由有关，所以需要能看懂路由表，已经如何添加修改 在命令行中输入<code>route -n</code> 或者<code>netstat -rn</code>打印本机路由表输出如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">0.0.0.0         10.22.19.254    0.0.0.0         UG    0      0        0 eth0</span><br><span class="line">10.22.19.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0</span><br><span class="line">10.96.0.0       0.0.0.0         255.240.0.0     U     0      0        0 boc0</span><br><span class="line">169.254.169.254 10.22.19.1      255.255.255.255 UGH   0      0        0 eth0</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br></pre></td></tr></table></figure>
+
+<h3 id="字段解释"><a href="#字段解释" class="headerlink" title="字段解释"></a>字段解释</h3><ul>
+<li><p><code>Destination</code> :目的网段，最长匹配0.0.0.0</p>
+</li>
+<li><p><code>Gateway</code>: 网关 0.0.0.0 表示无网关，即与本机IP同一网段，不需要经过网关(同一局域网的两台主机通信不需要经过网关)</p>
+</li>
+<li><p><code>GenMask:</code> 子网掩码</p>
+</li>
+<li><p><code>Flags</code> ：</p>
+<p>  U - Up表示有效 G - Gateway表示连接路由，若无这个字段表示直连目的地址 H - Host表示目标是具体主机，而不是网段 R 恢复动态路由产生的表项 D 由路由的后台程序动态地安装 M 由路由的后台程序修改</p>
+<p>  ! 拒绝路由址 H-Host表示目标是具体主机不是网段。</p>
+</li>
+<li><p><code>Metric:</code> 路由距离，到达指定网络所需要的中转数，大型局域网和广域网所必须的</p>
+</li>
+<li><p><code>Ref</code>: 路由项的引用次数（不在linux内核中使用）</p>
+</li>
+<li><p><code>Use</code>:此路由项被路由软件查找的次数</p>
+</li>
+<li><p><code>Iface</code>:网卡名</p>
+</li>
+</ul>
+<h3 id="路由类型"><a href="#路由类型" class="headerlink" title="路由类型"></a>路由类型</h3><p><strong>主机路由</strong>：路由表中执行单个IP地址或者主机名的路由记录，Flag值为H</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">10.0.0.0        10.139.128.1    255.255.255.0   UG    0      0        0 eth0</span><br></pre></td></tr></table></figure>
+
+<p><strong>网络路由</strong>： 主机可到达的网络</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">10.0.0.0        10.139.128.1    255.255.255.0   UG    0      0        0 eth0</span><br></pre></td></tr></table></figure>
+
+<p><strong>默认路由</strong>： 目标主机的IP或者网络不在路由表中，数据包就被发往默认网关</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">default         gateway         0.0.0.0         UG    0      0        0 eth0</span><br></pre></td></tr></table></figure>
+
+<h3 id="路由命令"><a href="#路由命令" class="headerlink" title="路由命令"></a>路由命令</h3><p><code>-A</code>：设置地址类型 <code>-C</code>：打印 Linux 内核的路由缓存 <code>-v</code>：显示详细信息 <code>-n</code>：不执行 DNS 反向查找，直接显示数字形式的 IP 地址 <code>-e</code>：netstat 格式显示路由表 <code>-net</code>：到一个网络的路由表 <code>-host</code>：到一个主机的路由表</p>
+<p>参数：</p>
+<p><code>add</code>：增加路由记录 <code>del</code>：删除路由记录 <code>target</code>：目的网络或目的主机 <code>gw</code>：设置默认网关 <code>mss</code>：设置TCP的最大区块长度（MSS），单位MB <code>window</code>：指定通过路由表的TCP连接的TCP窗口大小 <code>dev</code>：路由记录所表示的网络接口</p>
+<ul>
+<li>1、添加主机路由，添加主机路由时，需要指定网络 ID 和主机 ID，此时需要设置 netmask 255.255.255.255</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_139_74_centos ~]# route add -net 10.0.0.10 netmask 255.255.255.255 gw 10.139.128.1 dev eth0</span><br><span class="line">[root@VM_139_74_centos ~]# route -n</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">10.0.0.10       10.139.128.1    255.255.255.255 UGH   0      0        0 eth0</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>2 添加网络路由，添加网络路由时，只需指定网络 ID，通过 netmask 设置掩码长度：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_139_74_centos ~]# route add -net 10.0.0.0 netmask 255.255.255.0 gw 10.139.128.1 dev eth0</span><br><span class="line">[root@VM_139_74_centos ~]# route -n</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">10.0.0.0        10.139.128.1    255.255.255.0   UG    0      0        0 eth0</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>3 添加同一个局域网的主机，不指定 gw 选项时，添加的路由记录不使用网关</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_139_74_centos ~]# route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0</span><br><span class="line">[root@VM_139_74_centos ~]# route -n</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>4 屏蔽路由</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_139_74_centos ~]# route add -net 224.0.0.0 netmask 240.0.0.0 reject</span><br><span class="line">[root@VM_139_74_centos ~]# route -n</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">224.0.0.0       -               240.0.0.0       !     0      -        0 -</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>5删除可用</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route del -net 224.0.0.0 netmask 240.0.0.0</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>6 删除屏蔽路由</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route del -net 224.0.0.0 netmask 240.0.0.0 reject</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>7 删除和添加设置默认网关，添加或删除默认网关时，Linux 会自动检查网关的可用性：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_139_74_centos ~]# route add default gw 192.168.1.1</span><br><span class="line">SIOCADDRT: Network is unreachable</span><br><span class="line">[root@VM_139_74_centos ~]# route del default gw 192.168.1.1</span><br><span class="line">SIOCDELRT: No such process</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/10/22/K8S%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B/" rel="next" title="从零开始的K8S">
+                <i class="fa fa-chevron-left"></i> 从零开始的K8S
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/02/15/kubernetes%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" rel="prev" title="kubernetes网络模型">
+                kubernetes网络模型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Cong</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+		  <!--音乐播放器-->
+		  <div>
+			<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=495562302&auto=1&height=66"></iframe>
+		  </div>
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#network-namespace"><span class="nav-number">1.</span> <span class="nav-text">network namespace</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#veth-pair"><span class="nav-number">2.</span> <span class="nav-text">veth pair</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linux-bridge"><span class="nav-number">3.</span> <span class="nav-text">linux bridge</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tun-tap"><span class="nav-number">4.</span> <span class="nav-text">tun&#x2F;tap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iptables"><span class="nav-number">5.</span> <span class="nav-text">iptables</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ipip"><span class="nav-number">6.</span> <span class="nav-text">ipip</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VXLan"><span class="nav-number">7.</span> <span class="nav-text">VXLan</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Macvlan"><span class="nav-number">8.</span> <span class="nav-text">Macvlan</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPvlan"><span class="nav-number">9.</span> <span class="nav-text">IPvlan</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#路由"><span class="nav-number">10.</span> <span class="nav-text">路由</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字段解释"><span class="nav-number">10.1.</span> <span class="nav-text">字段解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由类型"><span class="nav-number">10.2.</span> <span class="nav-text">路由类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由命令"><span class="nav-number">10.3.</span> <span class="nav-text">路由命令</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cong</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+	<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+</body>
+</html>
+  <script type="text/javascript" src="/js/src/love.js"></script>

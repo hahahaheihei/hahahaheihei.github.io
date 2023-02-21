@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="聪菌粑粑" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="Open vSwitchOpen vSwitch 是一种产品质量的多层虚拟交换机，使用开源 Apache 2.0许可证授权。它旨在通过编程扩展实现大规模网络自动化，同时仍然支持标准的管理接口和协议(例如 NetFlow、 sFlow、 IPFIX、 RSPAN、 CLI、 LACP、802.1 ag)。  通过 NetFlow、sFlow(R)、IPFIX、SPAN、RSPAN 和 GRE 隧道镜">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ovs">
+<meta property="og:url" content="http://yoursite.com/2023/02/21/ovs/index.html">
+<meta property="og:site_name" content="聪菌粑粑">
+<meta property="og:description" content="Open vSwitchOpen vSwitch 是一种产品质量的多层虚拟交换机，使用开源 Apache 2.0许可证授权。它旨在通过编程扩展实现大规模网络自动化，同时仍然支持标准的管理接口和协议(例如 NetFlow、 sFlow、 IPFIX、 RSPAN、 CLI、 LACP、802.1 ag)。  通过 NetFlow、sFlow(R)、IPFIX、SPAN、RSPAN 和 GRE 隧道镜">
+<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6ec0257dfcb7450bbf2b44804e13026d~tplv-k3u1fbpfcp-watermark.image">
+<meta property="article:published_time" content="2023-02-21T14:28:14.000Z">
+<meta property="article:modified_time" content="2023-02-21T15:03:25.860Z">
+<meta property="article:author" content="Cong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6ec0257dfcb7450bbf2b44804e13026d~tplv-k3u1fbpfcp-watermark.image">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2023/02/21/ovs/"/>
+
+
+
+
+
+  <title>ovs | 聪菌粑粑</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">聪菌粑粑</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">希望你觉得认识我是件幸运的事</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2023/02/21/ovs/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="聪菌粑粑">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ovs</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-02-21T22:28:14+08:00">
+                2023-02-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Open-vSwitch"><a href="#Open-vSwitch" class="headerlink" title="Open vSwitch"></a>Open vSwitch</h1><p>Open vSwitch 是一种产品质量的多层虚拟交换机，使用开源 Apache 2.0许可证授权。它旨在通过编程扩展实现大规模网络自动化，同时仍然支持标准的管理接口和协议(例如 NetFlow、 sFlow、 IPFIX、 RSPAN、 CLI、 LACP、802.1 ag)。</p>
+<ul>
+<li><p>通过 NetFlow、sFlow(R)、IPFIX、SPAN、RSPAN 和 GRE 隧道镜像查看 VM 间通信</p>
+</li>
+<li><p>LACP (IEEE 802.1AX-2008)</p>
+</li>
+<li><p>具有中继的标准 802.1Q VLAN 模型</p>
+</li>
+<li><p>组播侦听</p>
+</li>
+<li><p>IETF 自动附加 SPBM 和基本所需的 LLDP 支持</p>
+</li>
+<li><p>BFD 和 802.1ag 链路监控</p>
+</li>
+<li><p>STP (IEEE 802.1D-1998) 和 RSTP (IEEE 802.1D-2004)</p>
+</li>
+<li><p>细粒度的 QoS 控制</p>
+</li>
+<li><p>支持 HFSC qdisc</p>
+</li>
+<li><p>每个虚拟机接口流量监管</p>
+</li>
+<li><p>具有源 MAC 负载平衡、主动备份和 L4 散列的 NIC 绑定</p>
+</li>
+<li><p>OpenFlow 协议支持（包括许多虚拟化扩展）</p>
+<ul>
+<li>IPv6 支持</li>
+</ul>
+</li>
+<li><p>多种隧道协议（GRE、VXLAN、STT 和 Geneve，支持 IPsec）</p>
+</li>
+<li><p>具有 C 和 Python 绑定的远程配置协议</p>
+</li>
+<li><p>内核和用户空间转发引擎选项</p>
+</li>
+<li><p>带有流缓存引擎的多表转发管道</p>
+</li>
+<li><p>转发层抽象，便于移植到新的软件和硬件平台</p>
+</li>
+</ul>
+<p>介绍来自Open vSwitch <a href="https://www.openvswitch.org/" target="_blank" rel="noopener">官方文档</a>，可能会有更新，最新文档可以通过官网查看。</p>
+<h2 id="ovs-architecture"><a href="#ovs-architecture" class="headerlink" title="ovs architecture"></a>ovs architecture</h2><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6ec0257dfcb7450bbf2b44804e13026d~tplv-k3u1fbpfcp-watermark.image?" alt="ovs-architecture.jpg"></p>
+<p>ovs的架构如上图所示，主要由内核<code>datapath</code>和用户空间的<code>vswitchd</code>、<code>ovsdb</code>组成</p>
+<ul>
+<li><p><code>datapath</code>：是负责数据交换的内核模块，从网卡读取数据，并快速匹配flowtable中的流表项，成功的直接转发，失败的上交vswtichd处理。它在初始化和 <code>port binding</code>的时候注册hook函数，把端口保温处理接管到内核模块，。。。。。 属于快速转发平面，主要负责流表匹配、保温修改、隧道封装、转发或者上送。并且维护底层转发表。在原始ovs中，报文首先经过该组件完成报文解析和封装、转发规则匹配，若找到转发规则不再经过用户空间，直接转发。否则转交用户空间的ovs-vswitchd组件进行处理。ovs-vswitchd组件与openvswitch.ko组件之间采用netlink执行进程间的通信。netlink是一种进程间通信机制，可用于处理用户态和内核态的通信。</p>
+</li>
+<li><p><code>vswitchd</code>：一个守护进程，是ovs的管理和控制服务，通过unix socket将配置保存至ovsdb，并通过netlink和内核模块交互，主要负责基本的转发逻辑、地址学习、外部物理端口绑定、还可以运行ovs-ofctl工具，采用openflow协议对交换机进行远程配置和管理</p>
+</li>
+<li><p><code>ovsdb</code>：ovs的数据库，保存了ovs的配置信息</p>
+</li>
+</ul>
+<p>Open vSwitch 内部分为用户态和内核态，用户态为守护程序实现了交换机和流表，是Open vSwitch的核心，提供了一些组件去管理交换机，实现数据库，对内核进行管理</p>
+<p>数据流通过ovs的转发流程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 数据包进入ovs</span><br><span class="line">2 匹配流表</span><br><span class="line">3 流表无匹配，向vswitchd中匹配转发规则</span><br><span class="line">4 规则无匹配，向上传递个openflow 控制器判断是否转发，</span><br><span class="line">5 无转发决策或者判断为否，将数据包drop</span><br><span class="line">6 判断为可以转发的话，将数据包正常转发，并缓存流表</span><br></pre></td></tr></table></figure>
+
+<h2 id="流表"><a href="#流表" class="headerlink" title="流表"></a>流表</h2><p>每条流表规则由一些列字段组成，可以分为<strong><code>基础字段</code></strong> 、<strong><code>匹配字段</code>和<code>动作字段</code></strong>三部分。 在打印流表时，在流表中还存在一些显示字段，如<code>duration</code>,<code>idle_age</code>等，此处把这些字段也暂时归之于基础字段之中.</p>
+<h3 id="基础字段"><a href="#基础字段" class="headerlink" title="基础字段"></a>基础字段</h3><ul>
+<li><code>cookie=value</code> 流表标识字段，cookie字段有两种书写方式：<code>cookie=value</code>和<code>cookie=value/mask</code>。<code>mask</code>中对应位为1时cookie中值相应的位须严格匹配，为0时cookie中值对应的位通配，当<code>mask</code>为-1时，必须严格匹配cookie值。</li>
+<li><code>duration=value</code> 流表生效时间，标识流表从下发到现在所持续的时间</li>
+<li><code>table=tableid</code> 流表所属表项，标识流表所属的表，默认为0</li>
+<li><code>priority=priority</code> 标识流表的优先级，范围为0-65535，值越大，优先级越高</li>
+<li><code>n_packets</code> 标识流表匹配包数</li>
+<li><code>n_bytes</code> 标识流表匹配字节数</li>
+<li><code>idle_timeout=sec</code> 流表空闲超时时间，流表会在空闲时间达到给定的时间时被删除。设置为0（默认值）时，流表不会因空闲时间被删除。</li>
+<li><code>hard_timeout=sec</code> 流表可存在的时间。设置此值后，流表会在到达给定时间后被删除。</li>
+<li><code>idle_age=sec</code> 流表空闲时间</li>
+<li><code>hard_age=sec</code> 流表存在时间。此字段与<code>duration</code>字段的区别在当流表被修改后，会重新设置<code>hard_timer</code>但是不会重置<code>duration</code></li>
+<li><code>ip_frag=frag_type</code> 当<code>dl_type</code>指定为IP或者IPv6，<code>frag_type</code>指定匹配的IP分片包或者非分片包的匹配 <code>frag_type</code>支持的值为： <code>no</code>: 仅匹配非分片报文 <code>yes</code>：匹配所有分片报文 <code>first</code>：仅匹配<code>offset</code>为0的分片报文 <code>later</code>： 仅匹配<code>offset</code>非0的分片报文 <code>not_later</code>：匹配非分片报文和offset为0的分片报文</li>
+</ul>
+<h3 id="匹配字段"><a href="#匹配字段" class="headerlink" title="匹配字段"></a>匹配字段</h3><ul>
+<li><code>in_port=port</code> 标识匹配接收数据包的端口号</li>
+<li><code>dl_type=ethertype</code> 匹配数据包的二层协议类型，IP数据包为<code>0x0800</code>，IPv6数据包为<code>0x86dd</code>，ARP数据包为<code>0x0806</code></li>
+<li><code>dl_src=xx:xx:xx:xx:xx:xx</code></li>
+<li><code>dl_dst=xx:xx:xx:xx:xx:xx</code> 匹配指定的链路层源或者目的MAC地址</li>
+<li><code>dl_src=xx:xx:xx:xx:xx:xx/xx:xx:xx:xx:xx:xx</code></li>
+<li><code>dl_dst=xx:xx:xx:xx:xx:xx/xx:xx:xx:xx:xx:xx</code> 匹配指定的链路层MAC地址，MAC地址格式为<code>ADDR/MASK</code>，当<code>MASK</code>值为<code>01:00:00:00:00:00</code>时，仅匹配多播位。当<code>dl_dst=01:00:00:00:00:00/01:00:00:00:00:00</code>时，匹配所有的组播报文和广播报文。<code>dl_dst=00:00:00:00:00:00/01:00:00:00:00:00</code>匹配所有的单播报文。</li>
+<li><code>nw_src=ip[/mask]</code></li>
+<li><code>nw_dst=ip[/mask]</code> 当<code>dl_type=0x0800</code>或指定<code>ip</code>时，匹配数据包的源、目的IP地址 当<code>dl_type=0x0806</code>或指定<code>arp</code>时，匹配ARP数据包的<code>ar_spa</code>或者<code>ar_tpa</code>字段</li>
+<li><code>dl_vlan=vlan</code> 匹配802.1Q类型（即vlan）数据包</li>
+<li><code>nw_proto=proto</code> 匹配数据包协议类型。当<code>dl_type=0x0800</code>时，匹配IP协议族的协议，例如<code>tcp</code>，<code>udp</code>，<code>icmp</code>等</li>
+<li><code>nw_tos=tos</code> 匹配<code>IP Tos/DSCP</code>或者IPv6的<code>tos</code>字段，值为<code>0-255</code></li>
+<li><code>nw_ecn=ecn</code> 匹配IP或者IPv6的<code>ecn</code>字段，值为<code>0~3</code></li>
+<li><code>nw_ttl=ttl</code> 匹配TTL值</li>
+<li><code>tp_src=port</code></li>
+<li><code>tp_dst=port</code> 若指定了<code>udp</code>或者<code>tcp</code>协议，则匹配udp/tcp的端口号</li>
+<li><code>icmp_type=type</code></li>
+<li><code>icmp_code=code</code> 若指定了<code>icmp</code>或者<code>icmpv6</code>协议，则匹配对应的icmp 类型或者code字段</li>
+<li><code>arp_sha=xx:xx:xx:xx:xx:xx</code></li>
+<li><code>arp_tha=xx:xx:xx:xx:xx:xx</code> 当设置<code>dl_type</code>为<code>ARP</code>或者<code>RARP</code>，则<code>arp_sha</code>和<code>arp_tha</code>匹配数据包的源、目的MAC地址</li>
+</ul>
+<h3 id="动作字段"><a href="#动作字段" class="headerlink" title="动作字段"></a>动作字段</h3><ul>
+<li><code>output:port</code> 将数据包从<code>port</code>接口发送</li>
+<li><code>enqueue:port:queue</code> 将数据包入队到指定端口的指定队列里</li>
+<li><code>normal</code> 将数据包按照设备上的正常L2/L3层处理方式进行处理</li>
+<li><code>flood</code> 将数据包发送到交换机上除接收接口和禁止flood的接口外的所有接口</li>
+<li><code>all</code> 将数据包发送到除接收接口外的所有接口</li>
+<li><code>controller(key=value…)</code> 将数据包作为<code>PACKET IN</code>消息发送到OpenFlow控制器。 支持的键值对： <code>max_len=nbytes</code>：限制发送到控制器的数据包长度字节数，默认情况是发送整个数据包；<code>reason=reason</code>：在<code>PACKET IN</code>消息中指明发送消息的原因，支持的<code>reason</code>为<code>action</code>(default)，<code>no_match</code>和<code>invalid_ttl</code>; <code>id=controller-id</code>：指明控制器ID</li>
+<li><code>in_port</code> 将数据包从接收的接口发送出去</li>
+<li><code>drop</code> 丢弃数据包</li>
+<li><code>mod_vlan_vid:vlan_vid</code> 修改数据包的vlan id</li>
+<li><code>mod_vlan_pcp:vlan_pcp</code> 修改数据包的vlan priority</li>
+<li><code>strip_vlan</code> 如果数据包中存在vlan tag，则剥离vlan tag</li>
+<li><code>push_vlan:ethertype</code> 为数据包添加新的vlan tag</li>
+<li><code>mod_dl_src:mac</code> 设置数据包的源MAC地址</li>
+<li><code>mod_dl_dst:mac</code> 设置数据包的目的MAC地址</li>
+<li><code>mod_nw_src:ip</code> 设置数据包的源IP地址</li>
+<li><code>mod_nw_dsp:ip</code> 设置数据包的目的IP地址</li>
+<li><code>mod_tp_src:port</code> 设置TCP或者UDP的源端口</li>
+<li><code>mod_tp_dst:port</code> 设置TCP或UDP的目的端口</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/02/21/iptables/" rel="next" title="iptables">
+                <i class="fa fa-chevron-left"></i> iptables
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Cong</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+		  <!--音乐播放器-->
+		  <div>
+			<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=495562302&auto=1&height=66"></iframe>
+		  </div>
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Open-vSwitch"><span class="nav-number">1.</span> <span class="nav-text">Open vSwitch</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ovs-architecture"><span class="nav-number">1.1.</span> <span class="nav-text">ovs architecture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#流表"><span class="nav-number">1.2.</span> <span class="nav-text">流表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基础字段"><span class="nav-number">1.2.1.</span> <span class="nav-text">基础字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#匹配字段"><span class="nav-number">1.2.2.</span> <span class="nav-text">匹配字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动作字段"><span class="nav-number">1.2.3.</span> <span class="nav-text">动作字段</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cong</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+	<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+</body>
+</html>
+  <script type="text/javascript" src="/js/src/love.js"></script>

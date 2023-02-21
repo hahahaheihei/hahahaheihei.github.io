@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="node.js," />
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="聪菌粑粑" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="学习日志[TOC] 一web框架基础Web应用（网站）： ​    浏览器（socket客户端） ​        2、访问域名网址（ip，端口） ​            app.listen(port)     ​        5、接收 ​        6、连接断开 ​    网站（socket服务端） ​        1、监听ip和端口（） ​            while Tru">
+<meta property="og:type" content="article">
+<meta property="og:title" content="node.js及express">
+<meta property="og:url" content="http://yoursite.com/2020/03/03/node-js%E5%8F%8Aexpress/index.html">
+<meta property="og:site_name" content="聪菌粑粑">
+<meta property="og:description" content="学习日志[TOC] 一web框架基础Web应用（网站）： ​    浏览器（socket客户端） ​        2、访问域名网址（ip，端口） ​            app.listen(port)     ​        5、接收 ​        6、连接断开 ​    网站（socket服务端） ​        1、监听ip和端口（） ​            while Tru">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/740839/201707/740839-20170720232404255-1533749216.gif">
+<meta property="article:published_time" content="2020-03-03T09:53:01.000Z">
+<meta property="article:modified_time" content="2020-03-03T09:54:38.814Z">
+<meta property="article:author" content="Cong">
+<meta property="article:tag" content="node.js">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images2015.cnblogs.com/blog/740839/201707/740839-20170720232404255-1533749216.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/03/node-js及express/"/>
+
+
+
+
+
+  <title>node.js及express | 聪菌粑粑</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">聪菌粑粑</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">希望你觉得认识我是件幸运的事</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/03/node-js%E5%8F%8Aexpress/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="聪菌粑粑">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">node.js及express</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-03T17:53:01+08:00">
+                2020-03-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="学习日志"><a href="#学习日志" class="headerlink" title="学习日志"></a>学习日志</h1><p>[TOC]</p>
+<h1 id="一web框架基础"><a href="#一web框架基础" class="headerlink" title="一web框架基础"></a>一web框架基础</h1><p>Web应用（网站）：</p>
+<p>​    浏览器（socket客户端）</p>
+<p>​        2、访问域名网址（ip，端口）</p>
+<p>​            app.listen(port)    </p>
+<p>​        5、接收</p>
+<p>​        6、连接断开</p>
+<p>​    网站（socket服务端）</p>
+<p>​        1、监听ip和端口（）</p>
+<p>​            while True:</p>
+<p>​            用户=等待用户连接</p>
+<p>​        3、收到’‘i want…’’</p>
+<p>​        4、响应：</p>
+<p>​            用户断开</p>
+<p>​    WEB应用(网站)</p>
+<pre><code>HTTP协议：</code></pre><p>​                发送：</p>
+<h1 id="二express框架学习笔记"><a href="#二express框架学习笔记" class="headerlink" title="二express框架学习笔记"></a>二express框架学习笔记</h1><p>(写在前面：</p>
+<p>express项目建立流程操作</p>
+<p>（脚手架全局安装npm install express-generator -g ）</p>
+<p>1、新建一个项目文件夹</p>
+<p>2、在VS code里打开文件夹</p>
+<p>3、按crtl和~键打开终端 </p>
+<p>4、在终端输入npm i express</p>
+<p>5、在文件夹根目录下新建server.js(此文件为项目入口文件，注意以.js为后缀名)</p>
+<h2 id="1、目录结构"><a href="#1、目录结构" class="headerlink" title="1、目录结构"></a>1、目录结构</h2><p><strong>bin</strong>    存放启动项目的脚本文件 </p>
+<p>​    www无后缀，项目的入口文件，配置web服务端口和监听</p>
+<p><strong>node_modules</strong>,存放所有项目依赖库。之后导入的包也会放入比如连接数据库的mongoose模块</p>
+<p><strong>public</strong>，静态文件（css，js，img）</p>
+<p><strong>routes,</strong>路由文件（MVC中C,controller）路由模块，其中默认了index.js和user.js在这里其实也包括一般后台语言中的控制器内容，当然在大的项目上是可以分离开来的 </p>
+<p><strong>views,</strong>页面文件（Ejs模板）</p>
+<p><strong>package.json</strong>,项目依赖配置及开发这信息</p>
+<p><strong>app.js</strong>,应用核心配置文件</p>
+<h2 id="2、package-json"><a href="#2、package-json" class="headerlink" title="2、package.json"></a>2、package.json</h2><p>​    package.json用于项目依赖配置及开发者信息，scripts属性是用于定义操作命令的，可以非常方便的增加启                动命令，比如默认的start，用npm start代表执行node ./bin/www命令 。查看package.json文件。 </p>
+<p>​    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&#96;&#123;&#96;</span><br><span class="line"></span><br><span class="line"> 	&quot;name&quot;: &quot;express4-demo&quot;,</span><br><span class="line"></span><br><span class="line"> 	&quot;version&quot;: &quot;0.0.0&quot;, &quot;private&quot;: true, </span><br><span class="line"></span><br><span class="line">&#96;	&quot;scripts&quot;: &#123;&#96;</span><br><span class="line"></span><br><span class="line"> 	&quot;start&quot;: &quot;node .&#x2F;bin&#x2F;www&quot;</span><br><span class="line"></span><br><span class="line"> 	&#125;, </span><br><span class="line"></span><br><span class="line">	&quot;dependencies&quot;: &#123; </span><br><span class="line"></span><br><span class="line">	&quot;body-parser&quot;: &quot;~1.10.2&quot;, </span><br><span class="line"></span><br><span class="line">&#96;	&quot;cookie-parser&quot;: &quot;~1.3.3&quot;,&#96;</span><br><span class="line"></span><br><span class="line"> 	&quot;debug&quot;: &quot;~2.1.1&quot;, &quot;ejs&quot;: &quot;~2.2.3&quot;, </span><br><span class="line"></span><br><span class="line">	&quot;express&quot;: &quot;~4.11.1&quot;, </span><br><span class="line"></span><br><span class="line">	&quot;morgan&quot;: &quot;~1.5.1&quot;, </span><br><span class="line"></span><br><span class="line">	&quot;serve-favicon&quot;: &quot;~2.2.0&quot; </span><br><span class="line"></span><br><span class="line">&#96;	&#125;&#96;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3、app-js核心文件"><a href="#3、app-js核心文件" class="headerlink" title="3、app.js核心文件"></a>3、app.js核心文件</h2><p>​    从Express3.x升级到Express4.x，主要的变化就在app.js文件中。查看app.js文件 </p>
+<p>​    // 加载依赖库，原来这个类库都封装在connect中，现在需地注单独加载</p>
+<p>​    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">var expreess&#x3D;require(&#39;express&#39;);</span><br><span class="line"></span><br><span class="line">	var createError &#x3D; require(&#39;http-errors&#39;);</span><br><span class="line"></span><br><span class="line">	var express &#x3D; require(&#39;express&#39;);</span><br><span class="line"></span><br><span class="line">	var path &#x3D; require(&#39;path&#39;);</span><br><span class="line"></span><br><span class="line">	var cookieParser &#x3D; require(&#39;cookie-parser&#39;);</span><br><span class="line"></span><br><span class="line">	var logger &#x3D; require(&#39;morgan&#39;);</span><br><span class="line"></span><br><span class="line">	var ejs&#x3D;require(&#39;ejs&#39;);</span><br><span class="line"></span><br><span class="line">	varfavion&#x3D;require(&#39;serve-favicon&#39;);</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;加载路由控制</span><br><span class="line"></span><br><span class="line">	var indexRouter &#x3D; require(&#39;.&#x2F;routes&#x2F;index&#39;);</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;var usersRouter&#x3D;require(&#39;.&#x2F;routes&#x2F;users&#39;);</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;创建项目实例</span><br><span class="line"></span><br><span class="line">	var app &#x3D; express();</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; view engine setup</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;定义ejs模板引擎和模板文件位置，也可以使用jade或其他模型引擎</span><br><span class="line"></span><br><span class="line">	app.set(&#39;views&#39;, path.join(__dirname, &#39;views&#39;));</span><br><span class="line"></span><br><span class="line">	app.set(&#39;view engine&#39;, &#39;ejs&#39;);</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;定义icon图标</span><br><span class="line"></span><br><span class="line">	app.use(favion(__dirname + &#39;&#x2F;public&#x2F;favion.ico&#39;));</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;定义日志和输出级别</span><br><span class="line"></span><br><span class="line">	app.use(logger(&#39;dev&#39;));</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;定义数据解析器</span><br><span class="line"></span><br><span class="line">	app.use(express.json());</span><br><span class="line"></span><br><span class="line">	app.use(express.urlencoded(&#123; extended: false &#125;));</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;定义cookie解析器</span><br><span class="line"></span><br><span class="line">	app.use(cookieParser());</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;定义静态文件目录public，静态文件(css,js,img)</span><br><span class="line"></span><br><span class="line">	app.use(express.static(path.join(__dirname, &#39;public&#39;)));</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;匹配路径和路由</span><br><span class="line"></span><br><span class="line">	app.use(&#39;&#x2F;&#39;,routes);</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;app.use(&#39;&#x2F;users&#39;, usersRouter);</span><br><span class="line"></span><br><span class="line">	app.use(&#39;&#x2F;&#39;, indexRouter);</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; catch 404 and forward to error handler错误处理</span><br><span class="line"></span><br><span class="line">	app.use(function(req, res, next) &#123;</span><br><span class="line"></span><br><span class="line">  	next(createError(404));</span><br><span class="line"></span><br><span class="line">	&#125;);</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; error handler</span><br><span class="line"></span><br><span class="line">	app.use(function(err, req, res, next) &#123;</span><br><span class="line"></span><br><span class="line"> 	 &#x2F;&#x2F; set locals, only providing error in development 开发环境，500错误处理和错误堆栈跟踪</span><br><span class="line"></span><br><span class="line">  	res.locals.message &#x3D; err.message;</span><br><span class="line"></span><br><span class="line">  	res.locals.error &#x3D; req.app.get(&#39;env&#39;) &#x3D;&#x3D;&#x3D; &#39;development&#39; ? err : &#123;&#125;;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">  	&#x2F;&#x2F; render the error page&#x2F;&#x2F; 生产环境，500错误处理</span><br><span class="line"></span><br><span class="line"> 	 res.status(err.status || 500);</span><br><span class="line"></span><br><span class="line">  	res.render(&#39;error&#39;);</span><br><span class="line"></span><br><span class="line">	&#125;);</span><br><span class="line">    module.exports &#x3D; app;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4、路由功能"><a href="#4、路由功能" class="headerlink" title="4、路由功能"></a>4、路由功能</h2><p>​    <em>路由</em>是指应用程序的端点（URI）如何响应客户端请求。有关路由的介绍，请参阅<a href="http://www.expressjs.com.cn/en/starter/basic-routing.html" target="_blank" rel="noopener">基本路由</a>。</p>
+<p>您可以使用Express <code>app</code>对象的方法定义路由，这些方法对应于HTTP方法; 例如，<code>app.get()</code>处理GET请求和<code>app.post</code>处理POST请求。有关完整列表，请参阅<a href="http://www.expressjs.com.cn/en/4x/api.html#app.METHOD" target="_blank" rel="noopener">app.METHOD</a>。您还可以使用<a href="http://www.expressjs.com.cn/en/4x/api.html#app.all" target="_blank" rel="noopener">app.all（）</a>来处理所有HTTP方法，并使用<a href="http://www.expressjs.com.cn/en/4x/api.html#app.use" target="_blank" rel="noopener">app.use（）</a>将中间件指定为回调函数（有关详细信息，请参阅<a href="http://www.expressjs.com.cn/en/guide/using-middleware.html" target="_blank" rel="noopener">使用中间件</a>）。</p>
+<p>这些路由方法指定当应用程序收到对指定路由（端点）和HTTP方法的请求时调用的回调函数（有时称为“处理函数”）。换句话说，应用程序“侦听”与指定路由和方法匹配的请求，并且当它检测到匹配时，它将调用指定的回调函数。</p>
+<p>实际上，路由方法可以有多个回调函数作为参数。使用多个回调函数时，重要的是提供<code>next</code>回调函数的参数，然后<code>next()</code>在函数体内调用以将控制权移交给下一个回调函数。</p>
+<p>以下代码是一个非常基本的路由示例。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var express &#x3D; require(&#39;express&#39;)</span><br><span class="line">var app &#x3D; express()</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; respond with &quot;hello world&quot; when a GET request is made to the homepage</span><br><span class="line">app.get(&#39;&#x2F;&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;hello world&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="路线方法"><a href="#路线方法" class="headerlink" title="路线方法"></a>路线方法</h3><p>路由方法从其中一个HTTP方法派生，并附加到<code>express</code>类的实例。</p>
+<p>以下代码是为应用程序根目录的GET和POST方法定义的路由示例。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; GET method route</span><br><span class="line">app.get(&#39;&#x2F;&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;GET request to the homepage&#39;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; POST method route</span><br><span class="line">app.post(&#39;&#x2F;&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;POST request to the homepage&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>Express支持与所有HTTP请求方法对应的方法：<code>get</code>，<code>post</code>等等。有关完整列表，请参阅<a href="http://www.expressjs.com.cn/en/4x/api.html#app.METHOD" target="_blank" rel="noopener">app.METHOD</a>。</p>
+<p>有一种特殊的路由方法，<code>app.all()</code>用于在路径上为<em>所有</em> HTTP请求方法加载中间件函数。例如，无论是使用GET，POST，PUT，DELETE还是<a href="https://nodejs.org/api/http.html#http_http_methods" target="_blank" rel="noopener">http模块</a>支持的任何其他HTTP请求方法，都会对路由“/ secret”的请求执行以下处理程序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.all(&#39;&#x2F;secret&#39;, function (req, res, next) &#123;</span><br><span class="line">  console.log(&#39;Accessing the secret section ...&#39;)</span><br><span class="line">  next() &#x2F;&#x2F; pass control to the next handler</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="路线路径"><a href="#路线路径" class="headerlink" title="路线路径"></a>路线路径</h3><p>路径路径与请求方法结合，定义可以进行请求的端点。路径路径可以是字符串，字符串模式或正则表达式。</p>
+<p>字符<code>?</code>，<code>+</code>，<code>*</code>，和<code>()</code>是他们的正则表达式的对应的子集。连字符（<code>-</code>）和点（<code>.</code>）按字面顺序由基于字符串的路径解释。</p>
+<p>如果你需要<code>$</code>在路径字符串中使用美元字符（），请将其包含在<code>([</code>和中<code>])</code>。例如，“ <code>/data/$book</code>” 处的请求的路径字符串将是“ <code>/data/([\$])book</code>”。</p>
+<p>Express使用<a href="https://www.npmjs.com/package/path-to-regexp" target="_blank" rel="noopener">path-to-regexp</a>来匹配路径路径; 有关定义路径路径的所有可能性，请参阅path-to-regexp文档。<a href="http://forbeslindesay.github.io/express-route-tester/" target="_blank" rel="noopener">Express Route Tester</a>是一个用于测试基本Express路线的便捷工具，尽管它不支持模式匹配。</p>
+<p>查询字符串不是路径路径的一部分。</p>
+<p>以下是基于字符串的路径路径的一些示例。</p>
+<p>此路由路径将匹配对根路由的请求，<code>/</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#39;&#x2F;&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;root&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>此路径路径将匹配请求<code>/about</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#39;&#x2F;about&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;about&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>此路径路径将匹配请求<code>/random.text</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#39;&#x2F;random.text&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;random.text&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>以下是基于字符串模式的路径路径的一些示例。</p>
+<p>此路径路径将匹配<code>acd</code>和<code>abcd</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#39;&#x2F;ab?cd&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;ab?cd&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这条路线的路径将会匹配<code>abcd</code>，<code>abbcd</code>，<code>abbbcd</code>，等等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#39;&#x2F;ab+cd&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;ab+cd&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这条路线的路径将会匹配<code>abcd</code>，<code>abxcd</code>，<code>abRANDOMcd</code>，<code>ab123cd</code>，等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#39;&#x2F;ab*cd&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;ab*cd&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>此路径路径将匹配<code>/abe</code>和<code>/abcde</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#39;&#x2F;ab(cd)?e&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;ab(cd)?e&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>基于正则表达式的路径路径示例：</p>
+<p>此路径路径将匹配其中包含“a”的任何内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#x2F;a&#x2F;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;&#x2F;a&#x2F;&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这条路线的路径将匹配<code>butterfly</code>和<code>dragonfly</code>，但不<code>butterflyman</code>，<code>dragonflyman</code>等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#x2F;.*fly$&#x2F;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;&#x2F;.*fly$&#x2F;&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="路线参数"><a href="#路线参数" class="headerlink" title="路线参数"></a>路线参数</h3><p>路径参数是命名的URL段，用于捕获在URL中的位置指定的值。捕获的值将填充在<code>req.params</code>对象中，路径参数的名称在路径中指定为其各自的键。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Route path: &#x2F;users&#x2F;:userId&#x2F;books&#x2F;:bookId</span><br><span class="line">Request URL: http:&#x2F;&#x2F;localhost:3000&#x2F;users&#x2F;34&#x2F;books&#x2F;8989</span><br><span class="line">req.params: &#123; &quot;userId&quot;: &quot;34&quot;, &quot;bookId&quot;: &quot;8989&quot; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>要使用路由参数定义路由，只需在路径路径中指定路由参数，如下所示。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#39;&#x2F;users&#x2F;:userId&#x2F;books&#x2F;:bookId&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(req.params)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>路径参数的名称必须由“单词字符”（[A-Za-z0-9_]）组成。</p>
+<p>由于连字符（<code>-</code>）和点（<code>.</code>）按字面解释，因此它们可以与路由参数一起使用以用于有用的目的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Route path: &#x2F;flights&#x2F;:from-:to</span><br><span class="line">Request URL: http:&#x2F;&#x2F;localhost:3000&#x2F;flights&#x2F;LAX-SFO</span><br><span class="line">req.params: &#123; &quot;from&quot;: &quot;LAX&quot;, &quot;to&quot;: &quot;SFO&quot; &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Route path: &#x2F;plantae&#x2F;:genus.:species</span><br><span class="line">Request URL: http:&#x2F;&#x2F;localhost:3000&#x2F;plantae&#x2F;Prunus.persica</span><br><span class="line">req.params: &#123; &quot;genus&quot;: &quot;Prunus&quot;, &quot;species&quot;: &quot;persica&quot; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>要更好地控制路由参数可以匹配的确切字符串，可以在括号（<code>()</code>）中附加正则表达式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Route path: &#x2F;user&#x2F;:userId(\d+)</span><br><span class="line">Request URL: http:&#x2F;&#x2F;localhost:3000&#x2F;user&#x2F;42</span><br><span class="line">req.params: &#123;&quot;userId&quot;: &quot;42&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为正则表达式通常是文字字符串的一部分，所以请确保<code>\</code>使用额外的反斜杠转义任何字符<code>\\d+</code>。</p>
+<p>在Express 4.x中，<a href="https://github.com/expressjs/express/issues/2495" target="_blank" rel="noopener">正则表达式中</a><a href="https://github.com/expressjs/express/issues/2495" target="_blank" rel="noopener">的<code>*</code>字符不以通常的方式解释</a>。作为一种解决方法，请使用<code>{0,}</code>而不是<code>*</code>。这可能会在Express 5中修复。</p>
+<h3 id="路线处理程序"><a href="#路线处理程序" class="headerlink" title="路线处理程序"></a>路线处理程序</h3><p>您可以提供多个回调函数，其行为类似于<a href="http://www.expressjs.com.cn/en/guide/using-middleware.html" target="_blank" rel="noopener">中间件</a>来处理请求。唯一的例外是这些回调可能会调用<code>next(&#39;route&#39;)</code>以绕过剩余的路由回调。您可以使用此机制对路径施加前置条件，然后在没有理由继续当前路由的情况下将控制权传递给后续路由。</p>
+<p>路由处理程序可以是函数，函数数组或两者的组合形式，如以下示例所示。</p>
+<p>单个回调函数可以处理路由。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#39;&#x2F;example&#x2F;a&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;Hello from A!&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>多个回调函数可以处理路径（确保指定<code>next</code>对象）。例如</strong>：next的使用在多个回调函数的基础上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">app.get(&#39;&#x2F;example&#x2F;b&#39;, function (req, res, next) &#123;</span><br><span class="line">  console.log(&#39;the response will be sent by the next function ...&#39;)</span><br><span class="line">  next()</span><br><span class="line">&#125;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;Hello from B!&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>一组回调函数可以处理路由。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">var cb0 &#x3D; function (req, res, next) &#123;</span><br><span class="line">  console.log(&#39;CB0&#39;)</span><br><span class="line">  next()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var cb1 &#x3D; function (req, res, next) &#123;</span><br><span class="line">  console.log(&#39;CB1&#39;)</span><br><span class="line">  next()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var cb2 &#x3D; function (req, res) &#123;</span><br><span class="line">  res.send(&#39;Hello from C!&#39;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.get(&#39;&#x2F;example&#x2F;c&#39;, [cb0, cb1, cb2])</span><br></pre></td></tr></table></figure>
+
+<p>独立函数和函数数组的组合可以处理路径。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">var cb0 &#x3D; function (req, res, next) &#123;</span><br><span class="line">  console.log(&#39;CB0&#39;)</span><br><span class="line">  next()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var cb1 &#x3D; function (req, res, next) &#123;</span><br><span class="line">  console.log(&#39;CB1&#39;)</span><br><span class="line">  next()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.get(&#39;&#x2F;example&#x2F;d&#39;, [cb0, cb1], function (req, res, next) &#123;</span><br><span class="line">  console.log(&#39;the response will be sent by the next function ...&#39;)</span><br><span class="line">  next()</span><br><span class="line">&#125;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;Hello from D!&#39;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="回应方法"><a href="#回应方法" class="headerlink" title="回应方法"></a>回应方法</h3><p><code>res</code>下表中响应对象（）的方法可以向客户端发送响应，并终止请求 - 响应周期。如果没有从路由处理程序调用这些方法，则客户端请求将保持挂起状态。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="http://www.expressjs.com.cn/en/4x/api.html#res.download" target="_blank" rel="noopener">res.download()</a></td>
+<td>提示下载文件。</td>
+</tr>
+<tr>
+<td><a href="http://www.expressjs.com.cn/en/4x/api.html#res.end" target="_blank" rel="noopener">重发（）</a></td>
+<td>结束响应过程。=&gt;  res.end()</td>
+</tr>
+<tr>
+<td><a href="http://www.expressjs.com.cn/en/4x/api.html#res.json" target="_blank" rel="noopener">res.json（）</a></td>
+<td>发送JSON响应。</td>
+</tr>
+<tr>
+<td><a href="http://www.expressjs.com.cn/en/4x/api.html#res.jsonp" target="_blank" rel="noopener">res.jsonp（）</a></td>
+<td>使用JSONP支持发送JSON响应。</td>
+</tr>
+<tr>
+<td><a href="http://www.expressjs.com.cn/en/4x/api.html#res.redirect" target="_blank" rel="noopener">res.redirect（）</a></td>
+<td>重定向请求。</td>
+</tr>
+<tr>
+<td><a href="http://www.expressjs.com.cn/en/4x/api.html#res.render" target="_blank" rel="noopener">res.render（）</a></td>
+<td>渲染视图模板。</td>
+</tr>
+<tr>
+<td><a href="http://www.expressjs.com.cn/en/4x/api.html#res.send" target="_blank" rel="noopener">res.send（）</a></td>
+<td>发送各种类型的回复。</td>
+</tr>
+<tr>
+<td><a href="http://www.expressjs.com.cn/en/4x/api.html#res.sendFile" target="_blank" rel="noopener">res.sendFile（）</a></td>
+<td>将文件作为八位字节流发送。</td>
+</tr>
+<tr>
+<td><a href="http://www.expressjs.com.cn/en/4x/api.html#res.sendStatus" target="_blank" rel="noopener">res.sendStatus（）</a></td>
+<td>设置响应状态代码并将其字符串表示形式作为响应主体发送。</td>
+</tr>
+</tbody></table>
+<h3 id="app-route（）"><a href="#app-route（）" class="headerlink" title="app.route（）"></a>app.route（）</h3><p>您可以使用创建路径路径的可链路径处理程序<code>app.route()</code>。由于路径是在单个位置指定的，因此创建模块化路由很有帮助，同时减少冗余和拼写错误。有关路由的更多信息，请参阅：<a href="http://www.expressjs.com.cn/en/4x/api.html#router" target="_blank" rel="noopener">Router（）文档</a>。</p>
+<p>以下是使用定义的链接路由处理程序的示例<code>app.route()</code>。和前面基本分路由的效果一样但是使用app.route代码量更少</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">app.route(&#39;&#x2F;book&#39;)</span><br><span class="line">  .get(function (req, res) &#123;</span><br><span class="line">    res.send(&#39;Get a random book&#39;)</span><br><span class="line">  &#125;)</span><br><span class="line">  .post(function (req, res) &#123;</span><br><span class="line">    res.send(&#39;Add a book&#39;)</span><br><span class="line">  &#125;)</span><br><span class="line">  .put(function (req, res) &#123;</span><br><span class="line">    res.send(&#39;Update the book&#39;)</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="express-Router"><a href="#express-Router" class="headerlink" title="express.Router"></a>express.Router</h3><p>使用<code>express.Router</code>该类创建模块化，可安装的路由处理程序。一个<code>Router</code>实例是一个完整的中间件和路由系统; 因此，它通常被称为“迷你app”。</p>
+<p>以下示例将路由器创建为模块，在其中加载中间件功能，定义一些路由，并将路由器模块安装在主应用程序中的路径上。</p>
+<p>创建<code>birds.js</code>app目录中指定的路由器文件，其中包含以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">var express &#x3D; require(&#39;express&#39;)</span><br><span class="line">var router &#x3D; express.Router()</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; middleware that is specific to this router</span><br><span class="line">router.use(function timeLog (req, res, next) &#123;</span><br><span class="line">  console.log(&#39;Time: &#39;, Date.now())</span><br><span class="line">  next()</span><br><span class="line">&#125;)</span><br><span class="line">&#x2F;&#x2F; define the home page route</span><br><span class="line">router.get(&#39;&#x2F;&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;Birds home page&#39;)</span><br><span class="line">&#125;)</span><br><span class="line">&#x2F;&#x2F; define the about route</span><br><span class="line">router.get(&#39;&#x2F;about&#39;, function (req, res) &#123;</span><br><span class="line">  res.send(&#39;About birds&#39;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">module.exports &#x3D; router</span><br></pre></td></tr></table></figure>
+
+<p>然后，在应用程序中加载路由器模块：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var birds &#x3D; require(&#39;.&#x2F;birds&#39;)</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; ...</span><br><span class="line"></span><br><span class="line">app.use(&#39;&#x2F;birds&#39;, birds)</span><br></pre></td></tr></table></figure>
+
+<p>该应用程序现在能够处理请求<code>/birds</code>和<code>/birds/about</code>，以及调用<code>timeLog</code>中间件功能是特定的路线。</p>
+<h2 id="5、静态文件托管"><a href="#5、静态文件托管" class="headerlink" title="5、静态文件托管"></a>5、静态文件托管</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">const express &#x3D;require(&#39;express&#39;);</span><br><span class="line"></span><br><span class="line">const app&#x3D;express();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;静态文件托管</span><br><span class="line"></span><br><span class="line">app.use(&#39;&#x2F;&#39;,express.static(&#39;public&#39;))</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">app.get(&#39;&#x2F;&#39;,function(req,res)&#123;</span><br><span class="line"></span><br><span class="line">    res.send(&quot;hello&quot;)</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.get(&#39;&#x2F;product&#39;,function(req,res)&#123;</span><br><span class="line"></span><br><span class="line">    res.send([</span><br><span class="line"></span><br><span class="line">        &#123;id:1,title:&#39;a&#39;&#125;,</span><br><span class="line"></span><br><span class="line">        &#123;id:2,title:&#39;b&#39;&#125;</span><br><span class="line"></span><br><span class="line">    ])</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.listen(3000,()&#x3D;&gt;&#123;</span><br><span class="line"></span><br><span class="line">    console.log(&#39;app listen on port 1000&#39;);</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>另一种写法：app.use(‘/static’,express.static(‘public’)) </p>
+<p>但是相应的访问连接变成了localhost:3000/static/index.html</p>
+<h2 id="6跨域请求"><a href="#6跨域请求" class="headerlink" title="6跨域请求"></a>6跨域请求</h2><p>域：一个ip+端口号为一个域，在相同ip和端口的均属同域</p>
+<p>在终端输入npm i cors 安装一个叫做cors的包</p>
+<p>在server.js文件中写入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.use(require(&#39;cors&#39;)());&#x2F;&#x2F;解决跨域问题</span><br></pre></td></tr></table></figure>
+
+<h2 id="7express与数据库"><a href="#7express与数据库" class="headerlink" title="7express与数据库"></a>7express与数据库</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">var mongo &#x3D; require(&quot;mongodb&quot;); &#x2F;&#x2F;引入mongodb模块</span><br><span class="line">var assert &#x3D; require(&quot;assert&quot;); &#x2F;&#x2F;引入断言模块 </span><br><span class="line"></span><br><span class="line">var MongoClient &#x3D; mongo.MongoClient;  &#x2F;&#x2F;开启服务 </span><br><span class="line"></span><br><span class="line">var Urls &#x3D; &quot;mongodb:&#x2F;&#x2F;localhost:27017&#x2F;demo2&quot;;  &#x2F;&#x2F;url储存  放在连接池中。 MongoClient.connect(Urls,function(err,db)&#123;  &#x2F;&#x2F;获取连接 </span><br><span class="line">	assert.equal(null,err);  &#x2F;&#x2F;使用断言模块代替以前的 if判断 </span><br><span class="line">	</span><br><span class="line">	&#x2F;&#x2F;修改数据 							</span><br><span class="line">	db.collection(&quot;t1&quot;).update(&#123;&quot;name&quot;:&quot;zhangsan1&quot;&#125;,&#123;$set:&#123;&quot;name&quot;:&quot;xiaoming&quot;&#125;&#125;,function(err,result)&#123; &#x2F;&#x2F;连接到数据库上面，并使用参数传入集合</span><br><span class="line">		assert.equal(null,err);</span><br><span class="line">		console.log(result); db.close();</span><br><span class="line">	&#125;);</span><br><span class="line">	</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="（1）mongoose的基础知识"><a href="#（1）mongoose的基础知识" class="headerlink" title="（1）mongoose的基础知识"></a>（1）mongoose的基础知识</h3><p>​    <strong>最重要的是，连接数据库之后，不会直接建立一个自己命名的数据库，必须要建立一个collection也就是说，必须要对自己建立的数据库有个具体的操作，才能够在数据库可视化软件上看到结果</strong>。</p>
+<p>　Mongooose中，有三个比较重要的概念，分别是Schema、Model、Entity。它们的关系是：Schema生成Model，Model创造Document，Model和Document都可对数据库操作造成影响，但Model比Document更具操作性</p>
+<p><code>Schema</code>用于定义数据库的结构。类似创建表时的数据定义(不仅仅可以定义文档的结构和属性，还可以定义文档的实例方法、静态模型方法、复合索引等)，每个<code>Schema</code>会映射到mongodb中的一个collection，<code>Schema</code>不具备操作数据库的能力</p>
+<p>　　Model是由Schema编译而成的构造器，具有抽象属性和行为，可以对数据库进行增删查改。Model的每一个实例（instance）就是一个文档document</p>
+<p>　　Document是由Model创建的实体，它的操作也会影响数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;1、引入mongoose</span><br><span class="line"></span><br><span class="line">const mongoose&#x3D;require(&#39;mongoose&#39;);</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;2、建立连接</span><br><span class="line"></span><br><span class="line">mongoose.connect(&#39;mongodb:&#x2F;&#x2F;localhost:27017&#x2F;hahaha&#39;);</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;3、操作表单（集合） 定义一个Schema(不具备操作数据库的能力)</span><br><span class="line"></span><br><span class="line">var MessageSchema&#x3D;mongoose.Schema(&#123;</span><br><span class="line"></span><br><span class="line">    name:String,</span><br><span class="line"></span><br><span class="line">    adress:String,</span><br><span class="line"></span><br><span class="line">    telephone:Number,</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;4、定义数据库模型  操作数据库</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;model中的第一个参数1首字母大写2和数据库表对应</span><br><span class="line"></span><br><span class="line">var Message&#x3D;mongoose.model(&#39;Message&#39;,MessageSchema);</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;5查询messages表的数据</span><br><span class="line"></span><br><span class="line">Message.find(&#123;&#125;,function(err,doc)&#123;</span><br><span class="line"></span><br><span class="line">    if(err)&#123;</span><br><span class="line"></span><br><span class="line">        console.log(err);</span><br><span class="line"></span><br><span class="line">        return;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    console.log(doc);</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;6增加数据</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;6.1实例化model 通过实例化message model创建增加的数据</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;6.2实例.save</span><br><span class="line"></span><br><span class="line">var message&#x3D;new Message(&#123;name:&#39;xx&#39;, adress:&#39;xxl&#39;,telephone:33&#125;);</span><br><span class="line"></span><br><span class="line">message.save(function(err)&#123;</span><br><span class="line"></span><br><span class="line">    if (err)&#123;</span><br><span class="line"></span><br><span class="line">        console.log(err);</span><br><span class="line"></span><br><span class="line">        return;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    console.log(&#39;搞定！&#39;)</span><br><span class="line"></span><br><span class="line">&#125;);&#x2F;&#x2F;save方法本身就是一个document，只能接受插入一条数据，插入多条数据用insertMary</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;7、修改数据</span><br><span class="line">&#x2F;&#x2F;第一个对象是查询条件，第二个是修改内容，function是回调函数</span><br><span class="line">Message.updateOne(&#123;&#39;_id&#39;:&#39;5c9f19a8c6d8b6504ac19e8f&#39;&#125;,&#123;&#39;name&#39;:&#39;聪哥&#39;&#125;,function(err,doc)&#123;</span><br><span class="line"></span><br><span class="line">    if (err)&#123;</span><br><span class="line"></span><br><span class="line">        return console.log(err);</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    console.log(doc)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;8、删除数据</span><br><span class="line"></span><br><span class="line">Message.deleteOne(&#123;&#39;_id&#39;:&#39;5c9f19a8c6d8b6504ac19e8f&#39;&#125;,(err,doc)&#x3D;&gt;&#123;</span><br><span class="line"></span><br><span class="line">    if (err)&#123;</span><br><span class="line"></span><br><span class="line">        return console.log(err);</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    console.log(doc)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="（2）连接和断开数据库"><a href="#（2）连接和断开数据库" class="headerlink" title="（2）连接和断开数据库"></a>（2）连接和断开数据库</h3><p>首先在终端</p>
+<p>npm i mongoose</p>
+<p>然后在server.js文件内写入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const mongoose&#x3D;require(&#39;mongooose&#39;);&#x2F;&#x2F;引入mongoose模块</span><br><span class="line"></span><br><span class="line">mongoose.connect(&#39;mongodb:&#x2F;&#x2F;localhost:27017&#x2F;express-test&#39;，&#123; useNewUrlParser: true &#125;)&#x2F;&#x2F;默认端口是27017固定格式express-test是数据库名</span><br><span class="line">&#x2F;&#x2F;定义一个模型，把相同类的模型放到同一个表内，Product为模型名，new mongoose.Schema(&#123;&#125;)为表结构&#123;&#125;表示传递一个对象参数产品模型的各种属性（类似于字典）</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">const Product&#x3D;mongoose.model(&#39;Product&#39;,new mongoose.Schema(&#123;</span><br><span class="line">    title:String,</span><br><span class="line">&#125;))</span><br><span class="line"></span><br><span class="line">app.get(&#39;&#x2F;product&#39;,async function(req,res)&#123;</span><br><span class="line">    res.send(await Product.find())&#x2F;*await,表示异步进行，在函数的返回部分出现“await“，function前要加上”async“find方法表示查询*&#x2F;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>【connect()】</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongoose.connect(url);</span><br></pre></td></tr></table></figure>
+
+<p>　　connect()最简单的使用方式，就是只要传入url参数即可，如下所示。连接到本地localhost的db1服务器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongoose.connect(&#39;mongodb:&#x2F;&#x2F;localhost&#x2F;db1&#39;);</span><br></pre></td></tr></table></figure>
+
+<p>　　如果还需要传递用户名、密码，则可以使用如下方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongoose.connect(&#39;mongodb:&#x2F;&#x2F;username:password@host:port&#x2F;database?options...&#39;);</span><br></pre></td></tr></table></figure>
+
+<p>　　connect()方法还接受一个选项对象options，该对象将传递给底层驱动程序。这里所包含的所有选项优先于连接字符串中传递的选项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongoose.connect(uri, options);</span><br></pre></td></tr></table></figure>
+
+<p>　　可用选项如下所示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">db            -数据库设置</span><br><span class="line">server        -服务器设置</span><br><span class="line">replset       -副本集设置</span><br><span class="line">user          -用户名</span><br><span class="line">pass          -密码</span><br><span class="line">auth          -鉴权选项</span><br><span class="line">mongos        -连接多个数据库</span><br><span class="line">promiseLibrary</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var options &#x3D; &#123;</span><br><span class="line">  db: &#123; native_parser: true &#125;,</span><br><span class="line">  server: &#123; poolSize: 5 &#125;,</span><br><span class="line">  replset: &#123; rs_name: &#39;myReplicaSetName&#39; &#125;,</span><br><span class="line">  user: &#39;myUserName&#39;,</span><br><span class="line">  pass: &#39;myPassword&#39;</span><br><span class="line">&#125;</span><br><span class="line">mongoose.connect(uri, options);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>　　如果要连接多个数据库，只需要设置多个url以<code>,</code>隔开，同时设置<code>mongos</code>为true</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mongoose.connect(&#39;urlA,urlB,...&#39;, &#123;</span><br><span class="line">   mongos : true </span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>　　connect()函数还接受一个回调参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mongoose.connect(uri, options, function(error) &#123;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p> 　　执行下列代码后，控制台输出“连接成功”</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var mongoose &#x3D; require(&#39;mongoose&#39;);</span><br><span class="line">mongoose.connect(&quot;mongodb:&#x2F;&#x2F;localhost&#x2F;test&quot;, function(err) &#123;</span><br><span class="line">    if(err)&#123;</span><br><span class="line">        console.log(&#39;连接失败&#39;);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        console.log(&#39;连接成功&#39;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p> 　　如果开启鉴权控制，以用户名”u1”，密码”123456”登录’db1’数据库。执行代码后，控制台输出“连接成功”</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var mongoose &#x3D; require(&#39;mongoose&#39;);</span><br><span class="line">mongoose.connect(&quot;mongodb:&#x2F;&#x2F;u1:123456@localhost&#x2F;db1&quot;, function(err) &#123;</span><br><span class="line">    if(err)&#123;</span><br><span class="line">        console.log(&#39;连接失败&#39;);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        console.log(&#39;连接成功&#39;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>【disconnect()】 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongoose.disconnect()</span><br></pre></td></tr></table></figure>
+
+<p>　　 使用disconnect()方法可以断开连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">var mongoose &#x3D; require(&#39;mongoose&#39;);</span><br><span class="line">mongoose.connect(&quot;mongodb:&#x2F;&#x2F;u1:123456@localhost&#x2F;db1&quot;, function(err) &#123;</span><br><span class="line">    if(err)&#123;</span><br><span class="line">        console.log(&#39;连接失败&#39;);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        console.log(&#39;连接成功&#39;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">setTimeout(function()&#123;</span><br><span class="line">    mongoose.disconnect(function()&#123;</span><br><span class="line">        console.log(&quot;断开连接&quot;);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;, 2000);</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://images2015.cnblogs.com/blog/740839/201707/740839-20170720232404255-1533749216.gif" alt="img"></p>
+<h3 id="（3）数据库中查找数据"><a href="#（3）数据库中查找数据" class="headerlink" title="（3）数据库中查找数据"></a>（3）数据库中查找数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Product.find()&#x2F;&#x2F;不传入参数，表示查找全部</span><br><span class="line"></span><br><span class="line">Product.find().skip.(1)limit(2)&#x2F;&#x2F;跳过1限制两条输出2，3</span><br><span class="line"></span><br><span class="line">Product.find().where(&#123;</span><br><span class="line"></span><br><span class="line">title:&#39;产品2&#39;</span><br><span class="line"></span><br><span class="line">&#125;)&#x2F;&#x2F;where表示查询条件&#123;&#125;为一个对象表示title&#x3D;产品2的一项</span><br><span class="line"></span><br><span class="line">Product.find().sort(&#123;_id:-1&#125;)&#x2F;&#x2F;按id从小到大排（-1表示倒序）</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.get(&#39;&#x2F;product&#x2F;:id&#39;,async function(req,res)&#123;</span><br><span class="line">	const data&#x3D;Product.findByid(req.params.id)&#x2F;*req.params表示客户端传过来的url中所有数据.id表示通过id获取的，如果前面路由是“：name”，后面就要写req.params.name*&#x2F;</span><br><span class="line">   res.send(data)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="（4）数据库中增加数据"><a href="#（4）数据库中增加数据" class="headerlink" title="（4）数据库中增加数据"></a>（4）数据库中增加数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Product.insertMany([</span><br><span class="line"></span><br><span class="line">    &#123;title:&#39;产品1&#39;&#125;,</span><br><span class="line"></span><br><span class="line">    &#123;title:&#39;产品2&#39;&#125;,</span><br><span class="line"></span><br><span class="line">    &#123;title:&#39;产品3&#39;&#125;,</span><br><span class="line"></span><br><span class="line">])&#x2F;&#x2F;inserMany插入多条数据，（）为传入参数[]表示传入一个列表</span><br></pre></td></tr></table></figure>
+
+<p>　文档新增有三种方法，一种是使用上面介绍过的文档的save()方法，另一种是使用模型model的create()方法，最后一种是模型model的insertMany()方法</p>
+<p>【save()】</p>
+<p>　　[注意]回调函数可以省略</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">save([options], [options.safe], [options.validateBeforeSave], [fn])</span><br></pre></td></tr></table></figure>
+
+<p>　　新建{age:10,name:’save’}文档，并保存</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">var mongoose &#x3D; require(&#39;mongoose&#39;);</span><br><span class="line">mongoose.connect(&quot;mongodb:&#x2F;&#x2F;u1:123456@localhost&#x2F;db1&quot;, function(err) &#123;</span><br><span class="line">    if(!err)&#123;</span><br><span class="line">        var schema &#x3D; new mongoose.Schema(&#123; age:Number, name: String&#125;);        </span><br><span class="line">        var temp &#x3D; mongoose.model(&#39;temp&#39;, schema);</span><br><span class="line">        &#x2F;&#x2F;使用链式写法    </span><br><span class="line">        new temp(&#123;age:10,name:&#39;save&#39;&#125;).save(function(err,doc)&#123;</span><br><span class="line">            &#x2F;&#x2F;[ &#123; _id: 59720bc0d2b1125cbcd60b3f, age: 10, name: &#39;save&#39;, __v: 0 &#125; ]</span><br><span class="line">            console.log(doc);        </span><br><span class="line">        &#125;);         </span><br><span class="line">    &#125;           </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>【create()】</p>
+<p>　　使用save()方法，需要先实例化为文档，再使用save()方法保存文档。而create()方法，则直接在模型Model上操作，并且可以同时新增多个文档</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.create(doc(s), [callback])</span><br></pre></td></tr></table></figure>
+
+<p>　　新增{name:”xiaowang”}，{name:”xiaoli”}这两个文档</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">var mongoose &#x3D; require(&#39;mongoose&#39;);</span><br><span class="line">mongoose.connect(&quot;mongodb:&#x2F;&#x2F;u1:123456@localhost&#x2F;db1&quot;, function(err) &#123;</span><br><span class="line">    if(!err)&#123;</span><br><span class="line">        var schema &#x3D; new mongoose.Schema(&#123; age:Number, name: String&#125;);        </span><br><span class="line">        var temp &#x3D; mongoose.model(&#39;temp&#39;, schema);   </span><br><span class="line">        temp.create(&#123;name:&quot;xiaowang&quot;&#125;,&#123;name:&quot;xiaoli&quot;&#125;,function(err,doc1,doc2)&#123;</span><br><span class="line">            &#x2F;&#x2F;&#123; __v: 0, name: &#39;xiaowang&#39;, _id: 59720d83ad8a953f5cd04664 &#125;</span><br><span class="line">            console.log(doc1); </span><br><span class="line">            &#x2F;&#x2F;&#123; __v: 0, name: &#39;xiaoli&#39;, _id: 59720d83ad8a953f5cd04665 &#125;</span><br><span class="line">            console.log(doc2); </span><br><span class="line">        &#125;);       </span><br><span class="line">    &#125;           </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>【insertMany()】</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.insertMany(doc(s), [options], [callback])</span><br></pre></td></tr></table></figure>
+
+<p>　　新增{name:”a”}，{name:”b”}这两个文档</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">var mongoose &#x3D; require(&#39;mongoose&#39;);</span><br><span class="line">mongoose.connect(&quot;mongodb:&#x2F;&#x2F;u1:123456@localhost&#x2F;db1&quot;, function(err) &#123;</span><br><span class="line">    if(!err)&#123;</span><br><span class="line">        var schema &#x3D; new mongoose.Schema(&#123; age:Number, name: String&#125;);        </span><br><span class="line">        var temp &#x3D; mongoose.model(&#39;temp&#39;, schema);   </span><br><span class="line">        temp.insertMany([&#123;name:&quot;a&quot;&#125;,&#123;name:&quot;b&quot;&#125;],function(err,docs)&#123;</span><br><span class="line">            &#x2F;&#x2F;[ &#123; __v: 0, name: &#39;a&#39;, _id: 59720ea1bbf5792af824b30c &#125;,</span><br><span class="line">            &#x2F;&#x2F;&#123; __v: 0, name: &#39;b&#39;, _id: 59720ea1bbf5792af824b30d &#125; ]</span><br><span class="line">            console.log(docs); </span><br><span class="line">        &#125;);       </span><br><span class="line"></span><br><span class="line">    &#125;           </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">【post接口】后台开发</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">server.use(express.json()) </span><br><span class="line"></span><br><span class="line">server.post(&#39;&#x2F;message&#39;,async function(req,res)&#123;</span><br><span class="line"></span><br><span class="line">    const data &#x3D;req.body</span><br><span class="line"></span><br><span class="line">    res.send(data)</span><br><span class="line"></span><br><span class="line">    await Message.create(data)</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">【put接口】修改数据库</span><br><span class="line"></span><br><span class="line">server.put(&#39;&#x2F;message&#x2F;:id&#39;,async function(req,res)&#123;</span><br><span class="line"></span><br><span class="line">    const message&#x3D;await Message.findById(req.params.id)&#x2F;&#x2F;通过id先找到要改的值</span><br><span class="line"></span><br><span class="line">    message.name&#x3D;req.body.name&#x2F;&#x2F;令要改的部分等于客户端传来的部分</span><br><span class="line"></span><br><span class="line">    await message.save()</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">【delete接口】</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;删除数据</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server.delete(&#39;&#x2F;message&#x2F;:id&#39;,async function(req,res)&#123;</span><br><span class="line"></span><br><span class="line">    const message&#x3D;await Message.findById(req.params.id)&#x2F;&#x2F;通过id先找到要改的值</span><br><span class="line"></span><br><span class="line">    await message.remove()</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="8登陆验证功能"><a href="#8登陆验证功能" class="headerlink" title="8登陆验证功能"></a>8登陆验证功能</h2><p>app.post</p>
+<h1 id="三、node-js对文件操作"><a href="#三、node-js对文件操作" class="headerlink" title="三、node.js对文件操作"></a>三、node.js对文件操作</h1><h2 id="1、-txt文件"><a href="#1、-txt文件" class="headerlink" title="1、.txt文件"></a>1、.txt文件</h2><p>1-1写入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var wfs&#x3D;require(&#39;fs&#39;); </span><br><span class="line">wfs.appendFile(&#39;.&#x2F;data.txt&#39;,&#39;待写入的内容&#39;,function(err)&#123;</span><br><span class="line">	if(err)console.log(err);</span><br><span class="line">	else console.log(&#39;success&#39;);                        </span><br><span class="line">&#125;)&#x2F;&#x2F;.appendFile()方法是在原文件中添加.write()方法是覆盖原文件的内容均为异步写入</span><br></pre></td></tr></table></figure>
+
+<p>1-2读</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fs.readFile(&#39;.&#x2F;path&#39;,callback)</span><br></pre></td></tr></table></figure>
+
+<h2 id="2、-json文件"><a href="#2、-json文件" class="headerlink" title="2、.json文件"></a>2、.json文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">let str&#x3D;JSON.stringify(standardata,&#39;&#39;,&#39;\t&#39;)&#x2F;&#x2F;standardata是取得的对象，把对象保存为json格式\t跳格（移至下一列）</span><br><span class="line"></span><br><span class="line">fs.appendFile(&#39;.&#x2F;data.json&#39;,str,function(err)&#123;</span><br><span class="line"></span><br><span class="line">    if(err)console.log(err);</span><br><span class="line"></span><br><span class="line">    else console.log(&#39;成功写入&#39;)</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h1 id="四、udp网络通信"><a href="#四、udp网络通信" class="headerlink" title="四、udp网络通信"></a>四、udp网络通信</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">const dgram&#x3D;require(&quot;dgram&quot;);</span><br><span class="line"></span><br><span class="line">const server&#x3D;dgram.createSocket(&#39;udp4&#39;);</span><br><span class="line"></span><br><span class="line">server.on(&#39;message&#39;,function(msg,rinfo)&#123;&#x2F;&#x2F;message事件&#x2F;解析全部在message事件里</span><br><span class="line"></span><br><span class="line">    var  data &#x3D; msg.toString(&#39;Hex&#39;)&#x2F;&#x2F;将16进制转为字符串</span><br><span class="line">    parase_1(data)+parase_2(data)</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">server.bind(56789,&#39;172.16.101.250&#39;);&#x2F;&#x2F;绑定IP和端口</span><br><span class="line"></span><br><span class="line">server.on(&#39;listening&#39;,function()&#123;</span><br><span class="line"></span><br><span class="line">    console.log(&#39;开始监听&#39;)&#x2F;&#x2F;listening事件</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h1 id="五、对常见内容的操作"><a href="#五、对常见内容的操作" class="headerlink" title="五、对常见内容的操作"></a>五、对常见内容的操作</h1><h2 id="5-1对字符串的操作"><a href="#5-1对字符串的操作" class="headerlink" title="5-1对字符串的操作"></a>5-1对字符串的操作</h2><p>（1）取某一位置的值，根据索引</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var str&#x3D;&#39;hello&#39;</span><br><span class="line"></span><br><span class="line">str[0] 	&#x3D;&gt;	 h</span><br></pre></td></tr></table></figure>
+
+<p>（2）切片取值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str.substring(0,2)&#x2F;&#x2F;从索引0到2不包括2</span><br><span class="line">str.substring(-1,-2)&#x2F;&#x2F;倒叙取值</span><br></pre></td></tr></table></figure>
+
+<h3 id="（3）字符串转为数组"><a href="#（3）字符串转为数组" class="headerlink" title="（3）字符串转为数组"></a>（3）字符串转为数组</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str.split(&#39;分割符&#39;)&#x2F;&#x2F;以字符串中某一特定元素为分割</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-2对数组的操作"><a href="#5-2对数组的操作" class="headerlink" title="5-2对数组的操作"></a>5-2对数组的操作</h2><p>（1）取某一位置的值同字符串</p>
+<p>（2）取切片</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var arr&#x3D;[1,2,3,&#39;hello&#39;,&#39;world&#39;]</span><br><span class="line"></span><br><span class="line">arr.slice(0,3)</span><br></pre></td></tr></table></figure>
+
+<p>（3）增加元素</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arr.push(&#39;x&#39;)&#x2F;&#x2F;向末尾添加若干元素</span><br><span class="line"></span><br><span class="line">arr.unshift(&#39;x&#39;)&#x2F;&#x2F;向头部添加若干元素</span><br></pre></td></tr></table></figure>
+
+<p>（4）删除</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">arr.pop()&#x2F;&#x2F;删除最后一个元素</span><br><span class="line"></span><br><span class="line">arr.shift()&#x2F;&#x2F;删除第一个元素</span><br><span class="line">　　去除字符串内所有的空格：str &#x3D; str.replace(&#x2F;\s*&#x2F;g,&quot;&quot;);</span><br><span class="line"></span><br><span class="line">　　去除字符串内两头的空格：str &#x3D; str.replace(&#x2F;^\s*|\s*$&#x2F;g,&quot;&quot;);</span><br><span class="line"></span><br><span class="line">　　去除字符串内左侧的空格：str &#x3D; str.replace(&#x2F;^\s*&#x2F;,&quot;&quot;);</span><br><span class="line"></span><br><span class="line">　　去除字符串内右侧的空格：str &#x3D; str.replace(&#x2F;(\s*$)&#x2F;g,&quot;&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>splice</p>
+<p><code>splice()</code>方法是修改<code>Array</code>的“万能方法”，它可以从指定的索引开始删除若干元素，然后再从该位置添加若干元素：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">var arr &#x3D; [&#39;Microsoft&#39;, &#39;Apple&#39;, &#39;Yahoo&#39;, &#39;AOL&#39;, &#39;Excite&#39;, &#39;Oracle&#39;];</span><br><span class="line">&#x2F;&#x2F; 从索引2开始删除3个元素,然后再添加两个元素:</span><br><span class="line">arr.splice(2, 3, &#39;Google&#39;, &#39;Facebook&#39;); &#x2F;&#x2F; 返回删除的元素 [&#39;Yahoo&#39;, &#39;AOL&#39;, &#39;Excite&#39;]</span><br><span class="line">arr; &#x2F;&#x2F; [&#39;Microsoft&#39;, &#39;Apple&#39;, &#39;Google&#39;, &#39;Facebook&#39;, &#39;Oracle&#39;]</span><br><span class="line">&#x2F;&#x2F; 只删除,不添加:</span><br><span class="line">arr.splice(2, 2); &#x2F;&#x2F; [&#39;Google&#39;, &#39;Facebook&#39;]</span><br><span class="line">arr; &#x2F;&#x2F; [&#39;Microsoft&#39;, &#39;Apple&#39;, &#39;Oracle&#39;]</span><br><span class="line">&#x2F;&#x2F; 只添加,不删除:</span><br><span class="line">arr.splice(2, 0, &#39;Google&#39;, &#39;Facebook&#39;); &#x2F;&#x2F; 返回[],因为没有删除任何元素</span><br><span class="line">arr; &#x2F;&#x2F; [&#39;Microsoft&#39;, &#39;Apple&#39;, &#39;Google&#39;, &#39;Facebook&#39;, &#39;Oracle&#39;]</span><br></pre></td></tr></table></figure>
+
+<p>（5）数组拼接</p>
+<p><code>concat()</code>方法把当前的<code>Array</code>和另一个<code>Array</code>连接起来，并返回一个新的<code>Array</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var arr &#x3D; [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;];</span><br><span class="line">var added &#x3D; arr.concat([1, 2, 3]);</span><br></pre></td></tr></table></figure>
+
+<h3 id="（6）数组转字符串"><a href="#（6）数组转字符串" class="headerlink" title="（6）数组转字符串"></a>（6）数组转字符串</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var arr &#x3D; [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, 1, 2, 3];</span><br><span class="line">arr.join(&#39;-&#39;); &#x2F;&#x2F; &#39;A-B-C-1-2-3&#39;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/node-js/" rel="tag"># node.js</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/02/25/gin%E6%A1%86%E6%9E%B6/" rel="next" title="gin框架">
+                <i class="fa fa-chevron-left"></i> gin框架
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/03/vue/" rel="prev" title="vue">
+                vue <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Cong</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+		  <!--音乐播放器-->
+		  <div>
+			<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=495562302&auto=1&height=66"></iframe>
+		  </div>
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#学习日志"><span class="nav-number">1.</span> <span class="nav-text">学习日志</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一web框架基础"><span class="nav-number">2.</span> <span class="nav-text">一web框架基础</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二express框架学习笔记"><span class="nav-number">3.</span> <span class="nav-text">二express框架学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、目录结构"><span class="nav-number">3.1.</span> <span class="nav-text">1、目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、package-json"><span class="nav-number">3.2.</span> <span class="nav-text">2、package.json</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、app-js核心文件"><span class="nav-number">3.3.</span> <span class="nav-text">3、app.js核心文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、路由功能"><span class="nav-number">3.4.</span> <span class="nav-text">4、路由功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#路线方法"><span class="nav-number">3.4.1.</span> <span class="nav-text">路线方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路线路径"><span class="nav-number">3.4.2.</span> <span class="nav-text">路线路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路线参数"><span class="nav-number">3.4.3.</span> <span class="nav-text">路线参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路线处理程序"><span class="nav-number">3.4.4.</span> <span class="nav-text">路线处理程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#回应方法"><span class="nav-number">3.4.5.</span> <span class="nav-text">回应方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#app-route（）"><span class="nav-number">3.4.6.</span> <span class="nav-text">app.route（）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#express-Router"><span class="nav-number">3.4.7.</span> <span class="nav-text">express.Router</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5、静态文件托管"><span class="nav-number">3.5.</span> <span class="nav-text">5、静态文件托管</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6跨域请求"><span class="nav-number">3.6.</span> <span class="nav-text">6跨域请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7express与数据库"><span class="nav-number">3.7.</span> <span class="nav-text">7express与数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#（1）mongoose的基础知识"><span class="nav-number">3.7.1.</span> <span class="nav-text">（1）mongoose的基础知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#（2）连接和断开数据库"><span class="nav-number">3.7.2.</span> <span class="nav-text">（2）连接和断开数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#（3）数据库中查找数据"><span class="nav-number">3.7.3.</span> <span class="nav-text">（3）数据库中查找数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#（4）数据库中增加数据"><span class="nav-number">3.7.4.</span> <span class="nav-text">（4）数据库中增加数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8登陆验证功能"><span class="nav-number">3.8.</span> <span class="nav-text">8登陆验证功能</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、node-js对文件操作"><span class="nav-number">4.</span> <span class="nav-text">三、node.js对文件操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、-txt文件"><span class="nav-number">4.1.</span> <span class="nav-text">1、.txt文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、-json文件"><span class="nav-number">4.2.</span> <span class="nav-text">2、.json文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、udp网络通信"><span class="nav-number">5.</span> <span class="nav-text">四、udp网络通信</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、对常见内容的操作"><span class="nav-number">6.</span> <span class="nav-text">五、对常见内容的操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1对字符串的操作"><span class="nav-number">6.1.</span> <span class="nav-text">5-1对字符串的操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#（3）字符串转为数组"><span class="nav-number">6.1.1.</span> <span class="nav-text">（3）字符串转为数组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2对数组的操作"><span class="nav-number">6.2.</span> <span class="nav-text">5-2对数组的操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#（6）数组转字符串"><span class="nav-number">6.2.1.</span> <span class="nav-text">（6）数组转字符串</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cong</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+	<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+</body>
+</html>
+  <script type="text/javascript" src="/js/src/love.js"></script>

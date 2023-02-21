@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="运维," />
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="聪菌粑粑" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="1、显示日期与时间的命令：date2、显示日历的命令：cal3、简单好用的计算器：bc4、热键“命令补全或文件补齐”：Tab5、热键“中断目前程序”：Ctrl+C6、热键“键盘输入结束（End of File）相当与输入exit”：Ctrl+D7、在线求助：man 【command】或 info 【command】，按q退出8、数据同步写入磁盘：sync9、关机命令：shutdown -h 【no">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux基本命令">
+<meta property="og:url" content="http://yoursite.com/2020/06/22/Linux%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="聪菌粑粑">
+<meta property="og:description" content="1、显示日期与时间的命令：date2、显示日历的命令：cal3、简单好用的计算器：bc4、热键“命令补全或文件补齐”：Tab5、热键“中断目前程序”：Ctrl+C6、热键“键盘输入结束（End of File）相当与输入exit”：Ctrl+D7、在线求助：man 【command】或 info 【command】，按q退出8、数据同步写入磁盘：sync9、关机命令：shutdown -h 【no">
+<meta property="article:published_time" content="2020-06-22T10:51:53.000Z">
+<meta property="article:modified_time" content="2020-11-19T12:27:11.175Z">
+<meta property="article:author" content="Cong">
+<meta property="article:tag" content="运维">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/06/22/Linux基本命令/"/>
+
+
+
+
+
+  <title>Linux基本命令 | 聪菌粑粑</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">聪菌粑粑</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">希望你觉得认识我是件幸运的事</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/22/Linux%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="聪菌粑粑">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux基本命令</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-22T18:51:53+08:00">
+                2020-06-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>1、显示日期与时间的命令：date<br>2、显示日历的命令：cal<br>3、简单好用的计算器：bc<br>4、热键“命令补全或文件补齐”：Tab<br>5、热键“中断目前程序”：Ctrl+C<br>6、热键“键盘输入结束（End of File）相当与输入exit”：Ctrl+D<br>7、在线求助：man 【command】或 info 【command】，按q退出<br>8、数据同步写入磁盘：sync<br>9、关机命令：shutdown -h 【now | 10(分钟) | 20：25】<br>10、重启命令：reboot<br>11、改变文件所属用户组：chgrp<br>12、改变文件所有者：chown [-R]  ‘groupname’ ‘dirname/filename’<br>     chgrp -R usergroup /home/yang/a.txt<br>13、改变文件的属性：chmod<br>       chmod [-R] 帐号名称 文件或目录<br>       chmod [-R] 帐号名称：组名 文件或目录<br>   chmod yangyuqin:root /home/hadoop/bb.txt<br>14、改变权限：chmod<br>        chmod [-R] xyz 文件或目录<br>        u,g,o表示user,group,other这3种身份的权限，a表示all，即全部的身份。+加入，-除去，=设置。r读，w写，x执行，4读，2写，1执行。<br>   chmod 777 /home/hadoop/a.txt<br>   chmod u+rwx,g+rx,o+r /home/hadoop/a.txt<br>15、目录<br>1）.    代表此层目录<br>2）..   代表上一层目录<br>3）-    代表前一个工作目录<br>4）～  代表“目前用户身份”所在的主文件夹<br>5）～account 代表account这个用户的主文件夹（account是个帐号名称）<br>16、切换目录：cd<br>      cd 【相对路径或绝对路径】<br>17、显示目前所在的目录：pwd<br>       pwd [-P]<br>      -P 如果是连接文件，会不以连接文件的数据显示，而是显示正确的完整路径，即获取连接文件的真正路径。<br>18、新建新目录：mkdir<br>      mkdir [-mp]  目录名称<br>      -m ： 配置文件的权限，mkdir -m 711 test1；<br>      -p  ： 帮助你直接将所需要的目录（包含上层目录）递归创建起来，如果没有这个参数，只能一层一层建立目录,mkdir -p /home/a/b/c/d.<br>19、删除“空”的目录：rmdir<br>       rmdir [-p] 目录名称<br>20、查看文件与目录：ls<br>        ls [-aAdfFhilnrRSt] 目录名称<br>        ls [–color={never,auto,always}] 目录名称<br>        ls [–full-time] 目录名称<br>    -a：全部的文件，连同隐藏文件（开头为.的文件）一起列出来（常用）<br>    -d：仅列出目录本身，而不是列出目录内的文件数据（常用）<br>    -f：直接列出结果，而不进行排序(ls默认会以文件名排序)</p>
+<p>​    -F：根据文件、目录等信息给予附加数据结构，例如：*：代表可执行文件，/：代表目录，=：代表socket文件，|：代表FIFO文件</p>
+<p>​    -h：将文件容量以人类较易读的方式(例如GB，KB等)列出来</p>
+<p>​    -l：列出长数据串，包含文件的属性与权限等数据（常用）</p>
+<p>​    -r：将排序结果反向输出，例如：原本文件名由小到大，反向则为由大到小</p>
+<p>​    -R：连同子目录内容一起列出来，等于该目录下的所有文件都会显示出来</p>
+<p>​    -S：以文件容量大小排序，而不是用文件名排序</p>
+<p>​    -t：依时间排序，而不是用文件名</p>
+<p>​    –color=never：不要依据文件特性给予颜色显示</p>
+<p>​    –color=always：显示颜色</p>
+<p>​    –color=auto：让系统自行依据设置来判断是否给予颜色</p>
+<p>​    –full-time：以完整时间模式（包含年、月、日、时、分）输出</p>
+<p>​    –time={atime，ctime}：输出访问时间或改变权限属性时间（ctime），而非内容更改时间（modification time）  </p>
+<p>21、复制文件或目录：cp</p>
+<p>​    cp [-adfilprsu] 源文件(source) 目标文件(destination)</p>
+<p>​    cp [option] source1,source2,source3, … directory</p>
+<p>​    -a：相当于-pdr 的意思</p>
+<p>​    -d：若源文件为连接文件的属性(link file)，则复制连接文件属性而非文件本身</p>
+<p>​    -p：连同文件的属性一起复制过去，而非使用默认属性(备份常用)</p>
+<p>​    -r：递归持续复制，用于目录的复制行为(常用)</p>
+<p>​    -i：若目标文件(destination)已经存在时，  在覆盖时会先询问操作的进行(常用)</p>
+<p>​    -l：进行硬链接（hard link）的连接文件创建，而非复制文件本身</p>
+<p>​    -s：复制成为符号链接文件(symbolic link)，即“快捷方式”文件</p>
+<p>​    -u：若destination 比source旧才更新destination<br>    注意：如果源文件有两个以上，则最后一个目的文件一定要是“目录”才行</p>
+<p>22、移除文件或目录：rm</p>
+<p>​    rm [-fir] 文件或目录</p>
+<p>​    -f：就是force的意思，忽略不存在的文件，不会出现警告信息</p>
+<p>​    -i：互动模式，在删除前会询问用户是否操作</p>
+<p>​    -r：递归删除。最常用在目录的删除。但是很危险！！！</p>
+<p>23、移动文件或目录，或更名：mv</p>
+<p>​    mv [-fiu] source destination</p>
+<p>​    mv [options] source1,source2,source3,…..,directory</p>
+<p>​    </p>
+<p>24、直接查看文件内容：cat（concatenate）</p>
+<p>​    cat [-AbEnTv]</p>
+<p>​    -A：相当于-vET的整合参数，可列出一些特殊字符，而不是空白而已</p>
+<p>​    -n：打印出行号，连同空白行也会有行号，与-b的参数不同</p>
+<p>​    -b：列出行号，仅针对非空白行做行号显示，空白行不标行号</p>
+<p>​    -E：将结尾的断行字符$显示出来</p>
+<p>​    -T：将[Tab]按键以^I显示出来</p>
+<p>​    -v：列出一些看不出来的特殊字符</p>
+<p>25：反向列示：tac</p>
+<p>​    </p>
+<p>26、添加行号打印：nl</p>
+<p>27、可翻页查看(只向后)：more，按q停止</p>
+<p>28、可翻页查看(可向前或向后)：less，按q停止</p>
+<p>29、取出前面几行：head</p>
+<p>​    head [-n number] 文件</p>
+<p>​    head -n 20 /home/test</p>
+<p>​    head -n -100 /home/test           //不打印后面100行的数据，只是显示前面的数据</p>
+<p>30、取出后面几行：tail</p>
+<p>​    tail [-n number] 文件</p>
+<p>​    tail -n 20 /home/test</p>
+<p>​    tail -n +100 /home/test          //只是列出100行以后的数据 </p>
+<p>31、文件时间：</p>
+<p>​    1）modification time(mtime)：当该文件的“内容数据”更改时，就会更新这个时间。内容数据指的是文件的内容，而不是文件的属性或权限。</p>
+<p>​    2）status time(ctime)：当该文件的“状态”(status)改变时，就会更新这个时间，举例来说，像是权限与属性被更改了，都会更新这个时间。</p>
+<p>​    3）access time(atime)：当“该文件的内容被取用”时，就会更新这个读取时间(access)。举例来说，我们使用cat去读取文件的时候，就会更新该文件的atime。</p>
+<p>32、修改文件时间或创建新文件：touch</p>
+<p>33、查看文件类型：file</p>
+<p>34、寻找“执行文件”：which</p>
+<p>​    which [-a] command</p>
+<p>​    -a：将所有由PATH目录中可以找到的命令均列出，而不只第一个被找到的命令名称</p>
+<p>​    which ipconfig</p>
+<p>​    which hadoop</p>
+<p>35、从whereis数据库文件中寻找特定的文件：whereis</p>
+<p>​    whereis [-bmsu] 文件或目录</p>
+<p>​    -b：只找二进制格式的文件</p>
+<p>​    -m：只找在说明文件manual路径下的文件</p>
+<p>​    -s：只找source源文件</p>
+<p>​    -u：查找不在上述三个选项当中的其他特殊文件</p>
+<p>​    whereis ifconfig</p>
+<p>36、从以创建的数据库/var/lib/mlocate/数据库中寻找特定的文件：locate<br>    locate [-ir] keyword<br>    -i：忽略大小写的差异<br>    -r：后面可接正则表达式的显示方式<br>    locate passwd       //从系统中找出与passwd相关的文件名</p>
+<p>​    </p>
+<p>37、从文件系统寻找特定的文件：find<br>    find [PATH] [option] [action]<br>    参数：<br>    1）与时间有关的参数：共有-atime、-ctime、-mtime，以-mtime说明<br>            -mtime n：n为数字，意义为n天之前的“1天之内”被更改过的文件<br>            -mtime +n：列出在n天之前（不含n天本身）被更改过的文件名<br>            -mtime -n：列出在n天之内（含n天本身）被更改过的文件名<br>            -newer file：file为一个存在的文件，列出比file还要新的文件名<br>        find / -mtime 0        //将过去系统上24小时内有改动(mtime)的文件列出，数字0代表目前的时间，所以是从现在开始到24小时前<br>        find / -mtime 3        //列出3天前的24小时内有改动的文件<br>        find /etc -newer /etc/passwd     //寻租/etc目录下的文件，如果文件日期比/etc/passwd新的就列出来，可用于分辨两个文件之间的新旧关系<br>    2）与用户或用户组名有关的参数：<br>            -uid n：n为数字，这个数字是用户的帐号ID，即UID ，这个UID 是记录在/etc/passwd里面与帐号名称对应的数字<br>            -gid n：n为数字，这个数字是用户组名的ID，即GID，这个GID 记录在/etc/group中<br>            -user name：name为用户帐号名称，例如dmtsai<br>            -group name：name为用户组名，例如users<br>            -nouser：寻找文件的所有者不存在/etc/passwd的人<br>            -nogroup：寻找文件的所有用户组不存在与/etc/group的人<br>        find /home -user vbird      //查找/home下面属于bird用户的文件，可将属于某个用户的所有文件都找出来<br>        find / -nouser                        //查找系统中不属于任何人的文件<br>    3）与文件权限及名称有关的参数：<br>            -name filename：查找文件名为filename的文件<br>            -size [+-]SIZE：查找比SIZE 还要大(+)或小(-)的文件。这个SIZE的规格有：c：代表byte，k：代表1024bytes。所以，要找比50KB还要大的文件，就是“-size +50k”<br>            -type TYPE：查找文件的类型为TYPE的，类型主要有：一般正规文件(f)、设备文件(b，c)、目录(d)、连接文件(l)、socket(s)及FIFO(p)等属性<br>            -perm mode：查找文件权限”刚好等于”mode的文件，这个mode为类似chmod的属性值，举例来说，-rwxr-xr-x的属性为0755<br>            -perm -mode：查找文件权限“必须要全部包含mode的权限”的文件，举例来说，我们要查找-rwxr–r–，即0744的文件，使用-perm -0744，当一个文件的权限为-rwxr-xr-x，即755时，也会被列出来，因为-rwxr-xr-x的属性已经包括了-rwxr–r–的属性 了<br>            -perm +mode：查找文件权限“包含任一mode的权限”的我文件，举例来说，我们查找-rwxr-xr-x，即-perm +0755，但一个文件是-rw——-也会被列出来，因为它有-rw……的属性存在<br>        find / -name passwd     //找出文件名为passwd的这个文件<br>        find /var -type s              //找出/var目录下文件类型为socket的文件名<br>        find / -perm +0755       //查找文件当中含有-rwxr-xr-x中的任一属性<br>    4）其他可进行的操作：<br>            -exec command：command为其他命令，-exec后面可再接其他的命令来处理查找到的结果<br>            -print：将结果打印到屏幕上，这个操作是默认值<br>        find /etc -name passwd -exec cat {} ;         //将找到文件名为passwd的文件作为命令的输入<br>38、列出文件系统的整体磁盘使用量：df<br>        df [-ahikHTm]   [目录或文件名]<br>        -a：列出所有的文件系统，包括系统特有的/proc等文件系统；<br>        -k：以KB的容量显示各文件系统<br>        -m：以MB的容量显示各文件系统<br>        -h：以人们较易阅读的GB、MB、KB等格式自行显示<br>        -H：以M=1000K 替代M=1024K 的进位方式<br>        -T：连同该分区的文件系统名称(例如ext3)也列出<br>        -i：不用硬盘容量，而已inode的数量来显示<br>    df      //将系统内所有的文件系统列出来，在Linux下如果df没有加任何参数，那么默认会将系统内所有的(不含特殊内存内的文件系统与swap)都以1KB的容量列出来。<br>    df -h    //将容量结果以易读的容量格式显示出来<br>    df -aT    //将系统内所有的特殊文件格式及名称都列出来<br>    df -h /etc        //将/etc下面的可用的磁盘容量以易读的容量格式显示，这样就可以知道某个目录下还有多少容量可以使用了<br>    df -ih             //将目前各个分区当中可用的inode数量列出来<br>39、评估文件系统的磁盘使用量（常用于评估目录所占容量）：du<br>        du [-ahskm] 文件或目录名称<br>        -a：列出所有的文件与目录容量，因为默认仅统计目录下面的文件量而已<br>        -h：以人们较易读的容量格式(G/M)显示<br>        -s：列出容量而已，而不列出每个各别的目录占用容量<br>        -S：不包含子目录下的总计，与-s有点差别<br>        -k：以KB列出容量显示<br>        -m：以MB列出容量显示<br>    du        //列出当前目录下的所有文件容量，但仅会显示目录容量(不含文件)<br>    du -a    //除了显示目录容量，还会显示文件容量<br>    du  -sm  ./*     //检查当前目录下面每个目录所占用的容量，可检查某个目录下那个子目录占用最大的容量<br>40、连接文件：ln<br>1）硬连接或实际连接：hard link<br>        ln /etc/crotab .<br>2）符号连接，也即是快捷方式：symbolic link<br>        ln -s /etc/crotab1 crotab2<br>41、变量的显示：echo<br>    echo $PATH<br>    echo helloworld<br>42、查看环境变量与常见环境变量说明：env<br>43、查看所有变量（含环境变量与自定义变量）：set<br>44、查看历史命令：history<br>45、提示符的设置：PS1<br>46、显示结果的语系变量：locale<br>47、命令别名设置：alias<br>            alias lm=’ls -l | more’<br>48、管道命令：pipe<br>            ls -al /etc | less<br>49、将同一行里面的数据进行分解，取出想要的数据：cut<br>        cut -d’分隔字符’ -f fields     //用于分隔字符<br>        cut -c 字符范围                        //用于排列整齐的信息<br>        -d：后面接分隔字符，与-f一起使用<br>        -f：依据-d的分隔字符将一段信息切割成为数据，与-f取出第几段的意思<br>        -c：以字符(characters)的单位取出固定字符区间<br>        echo $PATH | cut -d ‘:’ -f 5            //将PATH变量取出，以:为分割符，取出第五个路径<br>        echo $PATH | cut -d ‘:’  -f 3,5        //将PATH变量取出，以:为分割符，取出第3到第5个路径<br>        export | cut -c 12-                //将export输出的信息取得第12字符以后的所有字符串，但是在处理多空格相连的数据时会比较复杂<br>50、分析一行信息，若匹配想找的数据则将该行取出来：grep<br>        grep [-acinv] [–color=auto] ‘查找字符串’ filename<br>        -a：将binary文件以text文件的方法查找数据<br>        -c：计算找到“查找字符串”的次数<br>        -i：忽略大小写的不同，所以大小写视为相同<br>        -n：顺便输出行号<br>        -v：顺便输出行号<br>        –color=auto：可以将找到的关键字部分加上颜色显示<br>        history | grep ‘ls’<br>51、排序命令：sort<br>        sort [-fbMnrtuk] [file or stdin]<br>        -f：忽略大小写的差异，例如A与a视为编码相同<br>        -b：忽略最前面的空格符部分<br>        -M：以月份的名字来排序，例如JAN,DEC等的排序方法<br>        -n：使用“纯数字”进行排序（默认是以文字类型来排序的）<br>        -r：反向排序<br>        -u：就是uniq，相同的数据中，仅出现一行代表<br>        -t：分隔符，默认是用[Tab]键来分隔<br>        -k：以那个区间（field）来进行排序的意思<br>        cat /etc/passwd | sort<br>        cat /etc/passwd | sort -t ‘:’ -k 3<br>52、排序完成但是将重复的数据仅列出一个显示：uniq<br>        uniq [-ic]<br>        -i：忽略大小写字符的不同<br>        -c：进行计数<br>        last | cut -d ‘ ‘ -f  1 | sort | uniq -c<br>53、统计文件的字、行、字符：wc<br>        wc [-lwm]<br>        -l：仅列出行<br>        -w：仅列出多少字（英文单字）<br>        -m：多少字符<br>        cat /etc/man.config | wc      //输出三个数字分别为行、字数、字符数<br>54、数据的替换、删除、新增、选取工具：sed<br>        sed [-nefr] [动作]<br>1）参数：<br>        -n：使用安静（silent）模式。在一般sed的用法中，所有来自STDIN的数据一般都会被列出到屏幕上。但如果加上-n参数后，则只有经过sed特殊处理的那一行（或者操作）才会被列出来<br>        -e：直接在命令模式上进行sed的动作编辑<br>        -f：直接将sed的动作写在一个文件内，-f filename则可以在filename内的sed动作<br>        -r：sed的动作支持的是扩展型正则表达式的语法（默认是基础正则表达式语法）<br>        -i：直接修改读取的文件内容，而不是由屏幕输出<br>2）动作说明：[n1  [,n2]] function<br>        n1,n2：不见得会存在，一般代表选择进行动作的行数，举例来说，如果我的动作是需要在10到20行之间进行的，则“10，20[动作行为]”<br>function常用的参数：<br>        a：新增，a的后面可以接字符串，而这些字符串会在新的一行出现(目前的下一行)<br>        c：整行替换，c的后面可以接字符串，这些字符串可以替换n1,n2之间的行<br>        d：删除，因为是删除，所以d后面通常不接任何参数<br>        i：插入，i的后面可以接字符串，而这些字符串会在新的一行出现（目前上一行）<br>        p：打印，也就是将某个选择的数据打印出来，通常p会与参数sed -n一起运行<br>        s：部分替换，可以直接进行替换的工作，通常这个s的动作可以搭配正则表达式！例如1,20s/old/new/g<br>3）以行为单位的新增/删除功能<br>        nl /etc/passwd | sed ‘2,5d’        //将/etc/passwd的内容列出并且打印行号，同时，将第2～5行删除<br>4）在第二行后面（即加在第3行）加上“drink tea？“字样<br>        nl /etc/passwd | sed ‘2a drink tea?’<br>5）在第二行前面（即加在第2行）插入“drink tea？“字样<br>        nl /etc/passwd | sed ‘2i drink tea?’<br>6）在第二行后面加入两行字，例如”Drink tea or “ 与”drink beer？”<br>        -&gt; nl /etc/passwd | sed ‘2a Drink tea or  \<br>        -&gt; dirnk beer? ‘<br>7）以行为单位的替换与显示功能<br>        nl /etc/passwd | sed ‘2,5c No 2-5 number’       //将第2-5行的内容替换成为“No 2-5 number”<br>8）仅打印部分数据<br>        nl /etc/passwd | sed -n ‘5,7p’     //-n表示只会打印处理后的数据，如果不加-n，那处理后的数据会打印两次<br>9）部分数据的查找并替换的功能<br>        sed ‘s/要被替换的字符串/新的字符串/g’<br>    hadoop@hadoop-ThinkPad:<del>$ /sbin/ifconfig eth0<br>    eth0    Link encap:Ethernet  HWaddr b8:88:e3:3c:89:f9<br>                  inet addr:10.130.26.21  Bcast:10.130.26.127  Mask:255.255.255.128<br>                  inet6 addr: fe80::ba88:e3ff:fe3c:89f9/64 Scope:Link<br>                  UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1<br>                  RX packets:143999 errors:0 dropped:1 overruns:0 frame:0<br>                  TX packets:88285 errors:0 dropped:0 overruns:0 carrier:0<br>                  collisions:0 txqueuelen:1000<br>                  RX bytes:39104286 (39.1 MB)  TX bytes:39602666 (39.6 MB)<br>        sbin/ifconfig eth0 | grep ‘inet addr’ | sed ‘s/^.<em>addr://g’ | sed ‘s/Bcast.</em>$//g’            //从ifconfig文件中抽取出本机的ip地址<br>        cat /etc/man.config | grep ‘MAN’ | sed ‘s/#.*$//g’ | sed ‘/^$/d’<br>55、数据处理工具：awk<br>        sed常常作用于一整行的处理，awk则比较倾向于将一行分成数个“字段”来处理，awk相当适合处理小型的数据处理。<br>        awk ‘条件类型1{动作1}  条件类型2{动作2} … ‘  filename<br>        awk 主要是处理每一行的字段内的数据，而默认的字段的分隔符为空格键或[tab]键<br>        awk的处理流程是：<br>            1）读入第一行，并将第一行的数据填入$0,$1,$3等变量当中，$0代表一整行数据<br>            2）依据条件类型的限制，判断是否需要进行后面的动作<br>            3）做完所有的动作与条件类型<br>            4）所还有后续的“行”的数据，则重复上面1～3的步骤，直到所有的数据都读完为止<br>        awk的内置变量：<br>                NF  ：    每一行（$0）拥有的字段总数<br>                NR  ：   目前awk所处理的是“第几行”数据<br>                FS    ：   目前的分隔字符，默认是空格键<br>        awk运算符：<br>                &gt;：大于      &lt;：小于       &gt;=：大于或等于      &lt;=：小于或等于      ==：等于     ！=：不等于<br>        last -n 5 | awk ‘{print $1 “\t” $3}’      //打印第一列和第3列<br>        last -n 5 | awk ‘{print $1 “\t lines: “ NR “\t columes:” NF}’        //打印第一列，第几行，每一行的列数<br>        cat /etc/passwd | awk  ‘{FS=”:”}  $3 &lt; 10  {print  $1  “\t”  $3}’       //分隔为:，打印第三列小于10以下的数据，并且仅列出帐号与第三列<br>        新建一个文件：pay.txt<br>                    Name    1st     2nd     3th<br>                    VBird   23000   24000   25000<br>                    DMTsai  21000   20000   23000<br>                    Bird2   43000   42000   41000<br>        第一行只是说明，所以第一行不要进行加总（NR==1时处理）<br>        第二行以后就会有加总的情况出现（NR》=2以后处理）<br>       hadoop@hadoop-ThinkPad:</del>$ cat pay.txt | awk ‘NR==1{printf “%10s %10s %10s %10s %10s\n”,$1,$2,$3,$4,”Total”}<br>                                                                         NR&gt;=2{total=$2+$3+$4<br>                                                                           printf “%10s %10d %10d %10d %10.2f\n”,$1,$2,$3,$4,total}’<br>                          Name        1st        2nd        3th      Total<br>                          VBird      23000      24000      25000   72000.00<br>                          DMTsai      21000      20000      23000   64000.00<br>                          Bird2      43000      42000      41000  126000.00<br>56、文件比较工具：diff<br>        diff [-bBi] from-filr to-file<br>57、新增用户：useradd<br>        useradd [-u UID] [-g 初始化用户组] [-G 次要用户组] [-mM] [-c 说明栏] [-d 主文件夹绝对路径] [-s shell] 用户帐号名<br>        useradd vbird1<br>        useradd -u 123 -g users vbird2<br>58、设置密码：passwd<br>        passwd 123456<br>59、删除用户：userdel<br>        userdel vbird1<br>60、新增用户组：groupadd<br>        groupadd [-g gid] [-r] 用户组名<br>61、删除用户组：groupdel<br>        groupdel [groupname]<br>62、切换身份：su<br>        su [-lm] [-c 命令] [username]<br>        - ：单纯使用 - 如“su - ”，代表使用login-shell的变量文件读取方式来登录系统，若用户名称没有加上去，则代表切换为root身份<br>        -l：与 - 类似，但后面需要加欲切换的用户帐号，也是login-shell的方式<br>        -m：-m与-p是一样的，表示使用目前的环境设置，而不读取新用户的配置文件<br>        -c：仅进行一次命令<br>63、切换到root身份：sudo<br>64、查看当前用户的id：id<br>65、查看目前登录在系统上的用户：who或w<br>66、每个帐号的最近登录时间：lastlog<br>67、直接将命令丢到后台中“执行”：&amp;<br>        tar -zvf /tmp/etc.tar.gz /etc &amp;<br>68、将目前的工作丢到后台中“暂停‘：Ctrl+z<br>69、查看目前的后台工作状态：jobs<br>        jobs [-lrs]<br>        -l：除了列出job number与命令串之外，同时列出PID的号码<br>        -r：仅列出正在后台run的工作<br>        -s：仅列出正在后台当中暂停（stop）的工作<br>70、管理后台当中的工作：kill<br>        kill -signal %jobnumber<br>        kill -l      //-l列出目前kill能够使用的信号(signal)有哪些，signal代表给予后面接的那个工作什么样的指示。<br>        -1：重新读取一次参数的配置文件（reload）<br>        -2：代表与由键盘输入[ctrl]-c同样的操作；<br>        -9：立即强制删除一个工作<br>        -15：以正常的程序方式终止一项工作，与-9不同<br>        kill -9 %2; jobs<br>71、查看某个时间点的进行状况：ps<br>        ps aux        //查看系统所有的进程数据<br>        ps -lA         //也是能够查看所有系统的数据<br>        ps axjf        //连同部分进行树状态<br>        -A：所有的进程均显示出来，与-e具有相同的作用<br>        -a：不与termial有关的所有进程<br>        -u：有效用户相关的进程<br>        x：通常与a这个参数一起使用，可列出较完整的信息<br>        输出格式：<br>        l：较长、较详细地将该PID的信息列出<br>        j：工作的格式（jobs format）<br>        -f：做一个更为完整的输出<br>    1）仅查看自己的bash相关进程：ps -l<br>    2）查看系统所有进程：ps aux<br>                                                      ps aux | grep ‘syslog’<br>72、查看内存使用情况：free<br>        free [-b|-k|-m|-g] [-t]<br>        -b：直接输入free时，显示的是KB ，我们可以使用b（bytes）、m（MB），k（KB）及g（GB）来显示单位<br>        -t：在输出的最终结果中显示物理内存与swap的总量<br>73、查看系统与内核相关信息：uname<br>        uname [-asrmpi]<br>        -a：所有系统相关的信息<br>74、查看系统启动时间与工作负载：uptime<br>75、跟踪网络：netstat<br>76、查看网卡信息：ifconfig<br>        ifconfig eth0 192.168.0.1 netmask 255.255.255.0    //配置网卡ip地址<br>77、远程登录linux主机：ssh<br>        ssh [-l login_name] [-p port] [user@]hostname<br>        ssh 192.168.0.11<br>        ssh -l root 192.168.0.11  或  ssh <a href="mailto:root@192.168.0.11">root@192.168.0.11</a>        //指定用户<br>        ssh -l root -p 12333 216.230.230.114<br>78、远程拷贝：scp<br>        scp -r /home/administrator/test/  <a href="mailto:root@192.168.1.100">root@192.168.1.100</a>:/root/           //拷贝本机/home/administrator/test整个目录至远程主机192.168.1.100的/root目录下<br>        scp  /home/administrator/Desktop/old/driver/test/test.txt <a href="mailto:root@192.168.1.100">root@192.168.1.100</a>:/root/       //拷贝单个文件至远程主机<br>        scp -r <a href="mailto:root@192.168.62.10">root@192.168.62.10</a>:/root/  /home/administrator/Desktop/new/                                        //远程文件/文件夹下载<br>79、查看服务：service<br>        service –status-all</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag"># 运维</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/03/vue/" rel="next" title="vue">
+                <i class="fa fa-chevron-left"></i> vue
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/08/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="prev" title="数据结构">
+                数据结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Cong</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+		  <!--音乐播放器-->
+		  <div>
+			<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=495562302&auto=1&height=66"></iframe>
+		  </div>
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cong</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+	<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+</body>
+</html>
+  <script type="text/javascript" src="/js/src/love.js"></script>
